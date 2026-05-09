@@ -1,22 +1,27 @@
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-// Import the "Enter" icon
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
-
 export default async function Navigation() {
   const session = await getServerSession(authOptions);
+  
 
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
         <li>
-          <Link href="/cabins" className="hover:text-accent-400 transition-colors">
+          <Link
+            href="/cabins"
+            className="hover:text-accent-400 transition-colors"
+          >
             Cabins
           </Link>
         </li>
         <li>
-          <Link href="/about" className="hover:text-accent-400 transition-colors">
+          <Link
+            href="/about"
+            className="hover:text-accent-400 transition-colors"
+          >
             About
           </Link>
         </li>
@@ -37,7 +42,7 @@ export default async function Navigation() {
             </Link>
           ) : (
             <Link
-              href="/login"
+              href="/signin"
               className="hover:text-accent-400 transition-colors flex items-center gap-3 group"
             >
               {/* The Sign In Icon - Arrow entering the box */}

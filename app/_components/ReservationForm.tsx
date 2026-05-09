@@ -3,79 +3,95 @@
 import { Cabin } from "@/types/cabin";
 import { useReservation } from "../_context/ReservatationContext";
 import { format, differenceInDays } from "date-fns";
+import { bookingDataType } from "@/types/booking";
+import { useSession } from "next-auth/react";
+import { handleBookingFormAction } from "../_lib/action";
+// import { useActionState } from "react";
+import { useFormState } from "react-dom";
 
-function ReservationForm({ cabin }: { cabin: Cabin }) {
-  // CHANGE
-  const { maxCapacity } = cabin;
-  const { range } = useReservation()
+import { CabinBookedDate } from "../_lib/data-service";
+import { isRangeOverlapping } from "../_lib/helpers";
+import ReForm from "./ReForm";
+
+// import { useRouter } from "next/navigation";
+// import { revalidatePath } from "next/cache";
+const initialState = {
+  success: false,
+  message: "",
+};
+
+function ReservationForm({
+  cabin,
+  bookedDates,
+}: {
+  cabin: Cabin;
+  bookedDates: CabinBookedDate[];
+}) {
+  // const router = useRouter();
+
+  const { maxCapacity } = cabin; //
+
+  const { range } = useReservation();
+  const { data: session } = useSession();
+
   const nights =
-    range.from && range.to
-      ? differenceInDays(range.to, range.from)
-      : 0;
+    range.from && range.to ? differenceInDays(range.to, range.from) : 0;
+
+  const bookingData: bookingDataType = {
+    startDate: range.from ? format(range.from, "yyyy-MM-dd") : null,
+    endDate: range.to ? format(range.to, "yyyy-MM-dd") : null,
+    guest: session?.user?.guestId,
+    extrasPrice: 0,
+    cabin: cabin.id,
+    numNights: nights,
+  };
+
+  // 🔥 Bind server action with bookingData
+  const actionWithData = handleBookingFormAction.bind(null, bookingData);
+  const [state, formAction] = useFormState(actionWithData, initialState);
+  // ✅   4 — prevent invalid booking
+  // const isDateSelected = range.from && range.to;
+  const hasConflict = isRangeOverlapping(range, bookedDates);
+  const isValidRange = range.from && range.to && !hasConflict;
 
   return (
     <div className="scale-[1.01]">
+      {/* Header */}
       <div className="bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center">
-        <p>Logged in as</p>
+        <p>
+          Logged in as {session?.user?.name?.split(" ")[0] || "User"}{" "}
+          {/* ✅   3 */}
+        </p>
 
-        {/* <div className='flex gap-4 items-center'>
+        <div className="flex gap-4 items-center">
           <img
-            // Important to display google profile images
-            referrerPolicy='no-referrer'
-            className='h-8 rounded-full'
-            src={user.image}
-            alt={user.name}
+            referrerPolicy="no-referrer"
+            className="h-8 rounded-full"
+            src={session?.user?.image || ""}
+            alt={session?.user?.name || "User"}
           />
-          <p>{user.name}</p>
-        </div> */}
+          <p>{session?.user?.name}</p>
+        </div>
       </div>
-      <p className="text-4xl bg-slate-600" >
+
+      {/* Date Info */}
+      <p className="text-4xl bg-slate-600">
         {range.from ? format(range.from, "MMM dd") : "Select date"}
         {" — "}
         {range.to ? format(range.to, "MMM dd") : ""}
         {nights > 0 && <span> ({nights} nights)</span>}
       </p>
 
-      <form className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col">
-        <div className="space-y-2">
-          <label htmlFor="numGuests">How many guests?</label>
-          <select
-            name="numGuests"
-            id="numGuests"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-            required
-          >
-            <option value="" key="">
-              Select number of guests...
-            </option>
-            {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
-              <option value={x} key={x}>
-                {x} {x === 1 ? "guest" : "guests"}
-              </option>
-            ))}
-          </select>
-        </div>
+      <ReForm
+        mode="create"
+        state={state}
+        range={range}
+        hasConflict={hasConflict}
+        isValidRange={isValidRange}
+        maxCapacity={maxCapacity}
+        formAction={formAction}
+      />
 
-        <div className="space-y-2">
-          <label htmlFor="observations">
-            Anything we should know about your stay?
-          </label>
-          <textarea
-            name="observations"
-            id="observations"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
-            placeholder="Any pets, allergies, special requirements, etc.?"
-          />
-        </div>
-
-        <div className="flex justify-end items-center gap-6">
-          <p className="text-primary-300 text-base">Start by selecting dates</p>
-
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-            Reserve now
-          </button>
-        </div>
-      </form>
     </div>
   );
 }

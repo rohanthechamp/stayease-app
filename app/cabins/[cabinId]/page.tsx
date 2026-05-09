@@ -51,7 +51,7 @@ export default async function Page({ params }: PageProps) {
             <Cabin cabin={cabin} />
             <div>
                 <h2 className="text-6xl font-semibold text-center mb-10 text-accent-400">
-                    Reserve {cabin.name} today. Pay on arrival.
+                    Reserve {cabin.name} and {cabin.id} today. Pay on arrival.
                 </h2>
             </div>
 

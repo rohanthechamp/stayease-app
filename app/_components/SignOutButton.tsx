@@ -10,9 +10,12 @@ function SignOutButton() {
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true);
+      localStorage.clear()
+      sessionStorage.clear()
       // callbackUrl: "/" sends them home
       // redirect: true is the default, but we're being explicit
       await signOut({ callbackUrl: "/" });
+   
     } catch (error) {
       console.error("Sign out failed", error);
       setIsSigningOut(false);

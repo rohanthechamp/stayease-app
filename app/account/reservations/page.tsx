@@ -1,15 +1,23 @@
-import ReservationCard from "../../_components/ReservationCard";
-import { Booking } from "@/types/booking";
+import { getServerSession } from "next-auth";
+// import ReservationCard from "../../_components/ReservationCard";
+import { BookingAPI } from "@/types/booking";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getAllGuestBookings } from "@/app/_lib/data-service";
+import ReservationList from "@/app/_components/ReservationList";
 
-
-export default function Page() {
+export default async function Page() {
   // CHANGE
-  const bookings:Booking[] = [];
+  const session = await getServerSession(authOptions);
+  const guestId = session?.user?.guestId;
+  console.log("guest id", guestId);
+
+  const bookings: BookingAPI[] = await getAllGuestBookings(guestId);
+  console.log('getAllGuestBookings',bookings)
 
   return (
     <div>
       <h2 className="font-semibold text-2xl text-accent-400 mb-7">
-        Your reservations
+        Your reservations {bookings.length}
       </h2>
 
       {bookings.length === 0 ? (
@@ -20,11 +28,7 @@ export default function Page() {
           </a>
         </p>
       ) : (
-        <ul className="space-y-6">
-          {bookings.map((booking) => (
-            <ReservationCard booking={booking} key={booking.id} />
-          ))}
-        </ul>
+        <ReservationList bookings={bookings} />
       )}
     </div>
   );

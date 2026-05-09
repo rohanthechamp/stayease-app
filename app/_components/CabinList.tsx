@@ -1,12 +1,11 @@
 import React from "react";
 import CabinCard from "./CabinCard";
 import { Cabin } from "@/types/cabin";
-import { getCabins } from "../_lib/data-service";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 
-const CabinList = async ({ filter }: { filter: string }) => {
+const CabinList = async ({ filter,cabins }: { filter: string,cabins:Cabin[] }) => {
     // noStore()
-    const cabins: Cabin[] = await getCabins();
+
     if (cabins && cabins.length === 0) return null;
     let displayedCabins: Cabin[] = cabins;
     if (filter === "small")

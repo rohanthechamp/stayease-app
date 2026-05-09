@@ -9,9 +9,10 @@ const Reservation = async ({ Cabin }: { Cabin: Cabin }) => {
         getSettings(),
         getCabinBookedDates(Cabin.id),
     ]);
+    console.log('bookedDates', bookedDates);
     return (
         <div className="grid-cols-2 border- border-primary-800 min-h-[400px]">
-            <ReservationForm cabin={Cabin} />
+            <ReservationForm cabin={Cabin} bookedDates={bookedDates} />
             <DateSelector
                 settings={settings}
                 bookedDates={bookedDates}

@@ -1,21 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import logo from '@/public/logo.png';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import { signIn } from 'next-auth/react';
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import logo from "@/public/logo.png";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { signIn } from "next-auth/react";
 
 function SignInPage() {
     const [isLoading, setIsLoading] = useState(false);
 
+
     const handleSignIn = async () => {
         try {
             setIsLoading(true);
-            await signIn('google', { callbackUrl: '/' });
+            await signIn("google", { callbackUrl: "/account" });
+
+
         } catch (error) {
-            console.error('Sign in failed:', error);
+            console.error("Sign in failed:", error);
         } finally {
             setIsLoading(false);
         }
@@ -23,7 +26,6 @@ function SignInPage() {
 
     return (
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
-
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
@@ -49,16 +51,14 @@ function SignInPage() {
             <div className="absolute top-20 left-10 w-72 h-72 bg-accent-500/20 rounded-full blur-3xl animate-pulse" />
             <div
                 className="absolute bottom-20 right-10 w-96 h-96 bg-primary-400/10 rounded-full blur-3xl animate-pulse"
-                style={{ animationDelay: '1s' }}
+                style={{ animationDelay: "1s" }}
             />
 
             {/* Card */}
             <div className="relative z-10 w-full max-w-md mx-4">
                 <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
-
                     {/* Header */}
                     <div className="px-8 pt-10 pb-6 text-center">
-
                         <div className="flex justify-center mb-6">
                             <div className="relative">
                                 <div className="absolute inset-0 bg-accent-500/30 rounded-full blur-xl animate-pulse" />
@@ -78,18 +78,18 @@ function SignInPage() {
                         </h1>
 
                         <p className="text-primary-100/80 text-lg leading-relaxed">
-                            Your perfect cabin getaway awaits. Sign in to unlock exclusive access to booking your dream vacation.
+                            Your perfect cabin getaway awaits. Sign in to unlock exclusive
+                            access to booking your dream vacation.
                         </p>
                     </div>
 
                     {/* Features */}
                     <div className="px-8 py-4">
                         <div className="grid gap-3">
-
                             {[
-                                'Easy cabin booking',
-                                'Exclusive member deals',
-                                'Manage your reservations'
+                                "Easy cabin booking",
+                                "Exclusive member deals",
+                                "Manage your reservations",
                             ].map((feature, index) => (
                                 <div
                                     key={index}
@@ -101,7 +101,6 @@ function SignInPage() {
                                     <span className="text-sm font-medium">{feature}</span>
                                 </div>
                             ))}
-
                         </div>
                     </div>
 
@@ -116,17 +115,14 @@ function SignInPage() {
 
                     {/* Google Button */}
                     <div className="px-8 pb-10">
-
                         <button
                             onClick={handleSignIn}
                             disabled={isLoading}
                             className="group w-full relative bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-400 hover:to-accent-500 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-accent-500/25 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 overflow-hidden"
                         >
-
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
 
                             <div className="relative flex items-center justify-center gap-3">
-
                                 {isLoading ? (
                                     <>
                                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -158,39 +154,44 @@ function SignInPage() {
                                         <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}
-
                             </div>
                         </button>
 
                         <p className="text-center text-primary-200/60 text-sm mt-6">
-                            By signing in, you agree to our{' '}
+                            By signing in, you agree to our{" "}
                             <a className="text-accent-400 hover:text-accent-300 underline underline-offset-2">
                                 Terms of Service
-                            </a>{' '}
-                            and{' '}
+                            </a>{" "}
+                            and{" "}
                             <a className="text-accent-400 hover:text-accent-300 underline underline-offset-2">
                                 Privacy Policy
                             </a>
                         </p>
-
                     </div>
                 </div>
 
                 {/* Back link */}
                 <div className="text-center mt-6">
-
                     <Link
                         href="/"
                         className="inline-flex items-center gap-2 text-primary-200/70 hover:text-white transition-colors text-sm"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                            />
                         </svg>
                         Back to home
                     </Link>
-
                 </div>
-
             </div>
         </div>
     );

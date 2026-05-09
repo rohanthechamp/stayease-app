@@ -8,7 +8,7 @@ import React, {
     useState,
 } from "react";
 
-type DateRange = {
+export type DateRange = {
     from: Date | undefined;
     to: Date | undefined;
 };
@@ -23,7 +23,7 @@ const ReservationContext = createContext<ReservationContextType | null>(
     null
 );
 
-const initialState: DateRange = { from: undefined, to: undefined };
+const initialState: DateRange = { from: undefined, to: undefined,nights:undefined };
 
 function ReservationProvider({ children }: PropsWithChildren) {
     const [range, setRange] = useState(initialState);

@@ -4,8 +4,8 @@ export type BookingStatus = "checked-in" | "checked-out" | "unconfirmed";
 
 export type Booking = {
   id: number;
-  user: number;
-  guestId: number;
+  user: number| null;
+  guest: number;
 
   created_at: string;
   startDate: string;
@@ -30,7 +30,7 @@ export type SelectCountryProps = {
   name: string;
   id: string;
   className?: string;
-  // data: Country[],
+  data: Country[],
   onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 };
 
@@ -49,3 +49,41 @@ export type Settings = {
   created_at: Date,
   hotel: number
 }
+
+
+export type bookingDataType = {
+  user?: number;
+  startDate: Date | string | null;
+  endDate: Date | string | null;
+  cabinPrice: number;
+  extrasPrice?: number;
+  totalPrice: number;
+  status?: BookingStatus;
+  isPaid?: boolean;
+  guest: number;
+  cabin: number;
+  numNights: number;
+
+};
+export type formDataType = {
+  numGuests: number;
+  created_at: Date | string;
+  observations?: string;
+};
+
+ 
+export type BookingAPI = {
+  id: number;
+  guest: number;
+  startDate: string;
+  endDate: string;
+  numNights: number;
+  totalPrice: number;
+  numGuests: number;
+  status: string;
+  created_at: string;
+  cabin: {
+    name: string;
+    image: string;
+  };
+};

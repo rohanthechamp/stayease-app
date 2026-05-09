@@ -1,103 +1,145 @@
 "use client";
 
-// import React, { useEffect, useState } from "react";
-import React, { useState } from "react";
-
-import usLogo from "@/public/usFlag.png";
+import React, { useEffect, useRef, useState } from "react";
+// import usLogo from "@/public/usFlag.png";
 import Image from "next/image";
-// import { Country } from "@/types/booking";
+import { useUser } from "../_context/UserDataContext";
+import { Country } from "@/types/booking";
+import { handleFormAction } from "../_lib/action";
+import { useSession } from "next-auth/react";
+import { useFormStatus } from "react-dom";
 
 type Props = {
     children: React.ReactNode;
-    // data: Country[];
+    data: Country[];
 };
 
-const UpdateProfileForm = ({ children }: Props) => {
-    const [count, setCount] = useState();
+const UpdateProfileForm = ({ children, data }: Props) => {
+    const { pending } = useFormStatus();
 
-  // CHANGE
-  const countryFlag = "pt.jpg";
-  const nationality = "portugal";
-    // const [selectedCountry, setSelectedCountry] = useState(() => {
-    //     const saved = sessionStorage.getItem("userSelectedCountry");
-    //     return saved ? saved : "us";
-    // });
+    const resetRef = useRef<HTMLFormElement | null>(null);
+    const { data: session, update } = useSession(); // You'll need to import this
+    const { user } = useUser();
+    const [selectedCountry, setSelectedCountry] = useState<string>(() => {
+        const saved = localStorage.getItem("userSelectedCountry") || "us";
+        return saved;
+    });
+    // const [isSubmit, setIsSubmit] = useState(false);
 
-    // useEffect(() => {
-    //     sessionStorage.setItem('userSelectedCountry', selectedCountry)
-    // }, [selectedCountry]);
+    // Load from localStorage after mount
+    useEffect(() => {
+        const saved = localStorage.getItem("userSelectedCountry");
+        if (saved) setSelectedCountry(saved);
+    }, []);
+    useEffect(() => {
+        if (session?.user?.nationality) {
+            localStorage.setItem("userSelectedCountry", session?.user?.nationality);
+        }
+        // setIsSubmit((prev)=>!prev)
+    }, [selectedCountry, session]);
 
-    // const flag = data.find((country) => country.code === "us")?.flag ?? usLogo;
-    // console.log('selectedCountry value - ', selectedCountry)
+    const flag =
+        data.find((country) => country.name === selectedCountry)?.flag ??
+        session?.user?.countryFlag;
 
-    // const handleForm = (event: React.FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-    //     const data = new FormData(event.currentTarget);
-    //     // const formData=Object.fromEntries(data)
-    //     const userNationality = data.get("nationality") as string;
-    //     localStorage.setItem('userSelectedCountry', userNationality.split('%')[0])
+    console.log("SESSION HERE- ", session?.user);
 
-    //     // // selectedCountry.current=userNationality.split('%')[0];
-    //     console.log("User selected form data:- ", selectedCountry);
-    // };
     return (
         <form
-            className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col"
-        // onSubmit={handleForm}
+            ref={resetRef}
+            className="bg-sky-600 py-8 px-12 text-lg flex gap-6 flex-col"
+            action={async (formData) => {
+                // 1. Run the server-side update
+                await handleFormAction(formData);
+                // 2. Refresh the client-side session
+                // You can pass new data here to update the session immediately
+                await update();
+                resetRef.current?.reset();
+            }}
         >
+            {/* Full Name */}
             <div className="space-y-2">
                 <label>Full name</label>
                 <input
+                    value={user?.name ?? ""}
                     disabled
                     className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
                 />
             </div>
 
+            {/* Email */}
             <div className="space-y-2">
                 <label>Email address</label>
                 <input
+                    value={user?.email ?? ""}
                     disabled
                     className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
                 />
             </div>
+
+            {/* Hidden field for country */}
+            <input type="hidden" name="logo" value={flag} />
 
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
                     <label htmlFor="nationality">Where are you from?</label>
+
                     <Image
-                        src={ usLogo}
+                        src={flag}
                         alt="Country flag"
                         className="h-5 rounded-sm"
-                        width={100}
-                        height={100}
+                        width={30}
+                        height={20}
                     />
                 </div>
-                {/* {React.cloneElement(children as React.ReactElement, {
+
+                {React.cloneElement(children as React.ReactElement, {
                     onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                         const value = e.target.value;
-                        const [, code] = value.split("%");
-                        setSelectedCountry(code);
+                        const [cou, code] = value.split("%");
+                        setSelectedCountry(cou);
                     },
-                })} */}
-
-                {children}
+                    defaultCountry: selectedCountry,
+                })}
             </div>
+            {/* )} */}
 
+            {/* National ID */}
             <div className="space-y-2">
                 <label htmlFor="nationalID">National ID number</label>
                 <input
                     name="nationalID"
-                    className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+                    id="nationalID"
+                    // 1. Logic: Check if value exists
+                    // 2. Styling: If value exists, we use a subtle border/bg change
+                    className={`px-5 py-3 w-full shadow-sm rounded-sm transition-all duration-300 
+            ${session?.user?.nationalID
+                            ? "bg-primary-100 border-2 border-green-600 text-primary-900"
+                            : "bg-primary-200 text-primary-800 border border-transparent"
+                        }`}
+                    defaultValue={session?.user?.nationalID || ""}
+                    placeholder="Enter your national ID..."
                 />
-            </div>
 
+                {/* Optional: Subtle helper text for the user */}
+                {session?.user?.nationalID && (
+                    <p className="text-lg text-green-800 font-medium">
+                        ✓ Identity verified on file. You can edit this if needed.
+                    </p>
+                )}
+            </div>
             <div className="flex justify-end items-center gap-6">
-                <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
-                    Update profile
+                <button
+                    disabled={pending}
+                    className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold
+        hover:bg-accent-600 transition-all
+        disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300
+        flex items-center justify-center gap-2"
+                >
+                    {pending ? <p>`"Submitting......."`</p> : "Submit"}
                 </button>
             </div>
         </form>
     );
 };
-
 export default UpdateProfileForm;

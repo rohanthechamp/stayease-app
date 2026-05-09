@@ -1,12 +1,24 @@
 // import { Country } from "@/types/booking";
-import { Country, Settings } from "@/types/booking";
+import {
+    Booking,
+    BookingAPI,
+    bookingDataType,
+    Country,
+    formDataType,
+    Settings,
+} from "@/types/booking";
 import { axiosPrivate } from "./axiosClient";
 import { Cabin, FilterValue, SortValue } from "@/types/cabin";
+import { format } from "date-fns";
+import { BASE_URL, getError } from "./helpers";
 
+import { AxiosError } from "axios";
+import { cache } from "react";
+import { revalidatePath } from "next/cache";
 export async function getCountries(): Promise<Country[]> {
     const res = await fetch(
         "https://restcountries.com/v3.1/all?fields=name,cca2,flags",
-        { cache: "force-cache" }, // good for Next.js
+        { cache: "force-cache" },
     );
 
     if (!res.ok) throw new Error("Failed to fetch countries");
@@ -19,7 +31,7 @@ export async function getCountries(): Promise<Country[]> {
         flag: c.flags.svg,
     }));
 
-    return countries;
+    return countries.sort().reverse();
 }
 // type Country = {
 //   name: string;
@@ -155,25 +167,24 @@ export async function getCabinBookedDates(
     const data = res.data;
 
     const formatted: CabinBookedDate[] = data.map((item: any) => ({
-        startDate: new Date(item.startDate),
-        endDate: new Date(item.endDate),
+        startDate: format(new Date(item.startDate), "yyyy M d"),
+        endDate: format(new Date(item.endDate), "yyyy M d"),
     }));
     // console.log('formatted data',res)
 
     return formatted;
 }
 
-export async function getGuest(email: string) {
-    try {
-        const response = await axiosPrivate.get(`api/guests/`, {
-            params: { email },
-        });
-        return response.data;
-    } catch (error: any) {
-        if (error.response?.status === 404) return null;
-        throw error;
-    }
-}
+export const getGuest = cache(async (email: string) => {
+    const res = await fetch(`${BASE_URL}/api/guests?email=${email}`, {
+        cache: "no-store", // always fresh
+    });
+
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error("Failed to fetch guest");
+
+    return res.json();
+});
 
 export async function createGuest(newGuest: {
     email: string;
@@ -188,5 +199,162 @@ export async function createGuest(newGuest: {
     } catch (error: any) {
         console.error("Error creating guest:", error.response?.data);
         throw new Error("Guest creation failed");
+    }
+}
+export async function updateGuest(
+    guestId: number,
+    updatedGuest: {
+        nationality?: string;
+        nationalID?: number;
+        countryFlag?: string;
+    },
+) {
+    try {
+        const { data, status } = await axiosPrivate.patch(
+            `api/guests/${guestId}/`,
+            updatedGuest,
+        );
+        console.log("updateGuest data", data);
+
+        return {
+            data,
+            status,
+        };
+    } catch (error: any) {
+        console.error("Guest update error:", error.response?.data);
+        throw new Error("Failed to update guest");
+    }
+}
+
+type ApiResponse<T = any> =
+    | { success: true; status: number; data: T }
+    | { success: false; status: number; message: string };
+
+export async function createBooking(
+    bookingData: bookingDataType,
+    formData: formDataType,
+): Promise<ApiResponse> {
+    const BookingData = { ...bookingData, ...formData };
+    console.log("BookingData :- ", BookingData);
+    try {
+        const { data, status } = await axiosPrivate.post(
+            `api/bookings/`,
+            BookingData,
+        );
+        console.log("Success ☺️☺️☺️", data, status);
+        return { success: true, status, data };
+    } catch (error: any) {
+        console.log("Failed 🚨🚨🚨🚨", error);
+
+        const errorMsg = getError(error);
+
+        return {
+            success: false,
+            status: error?.response?.status,
+            message: errorMsg,
+        };
+    }
+}
+
+export async function getAllGuestBookings(guestId: number): Promise<Booking[]> {
+    try {
+        const { data } = await axiosPrivate.get(`/api/guests/${guestId}/bookings/`);
+
+        return (data || []).map((item: any) => ({
+            id: item.id,
+            guest: item.guest_id,
+            startDate: item.startDate,
+            endDate: item.endDate,
+            numNights: item.numNights,
+            totalPrice: item.totalPrice,
+            numGuests: item.numGuests,
+            status: item.status,
+            created_at: item.created_at,
+            cabin: {
+                name: item.cabin__name,
+                image: item.cabin__image,
+            },
+        }));
+    } catch (error: any) {
+        throw new Error(
+            error?.response?.data?.detail || "Failed to fetch all bookings",
+        );
+    }
+}
+
+export type ApiResponseBookingData = {
+    observations: string;
+    numGuests: number;
+    maxCapacity: number;
+};
+export async function getBookingData(
+    bookingId: number,
+): Promise<ApiResponseBookingData> {
+    if (!bookingId) {
+        throw new Error("Invalid bookingId");
+    }
+    const { data } = await axiosPrivate.get(`api/bookings/${bookingId}/minimal/`);
+
+    const impData = {
+        observations: data.observations,
+        numGuests: data.numGuests,
+        maxCapacity: data.cabin__maxCapacity,
+    };
+
+    return impData;
+}
+
+export async function updateBooking(
+    bookingId: number,
+    UpdateBookingData: ApiResponseBookingData,
+): Promise<ApiResponse> {
+    console.log("UpdateBookingData :- ", UpdateBookingData);
+    try {
+        const { data, status } = await axiosPrivate.patch(
+            `api/bookings/${bookingId}/`,
+            UpdateBookingData,
+        );
+        console.log("Success ☺️☺️☺️", data, status);
+        return { success: true, status, data };
+    } catch (error: any) {
+        console.log("Failed 🚨🚨🚨🚨", error);
+        const errorMsg = getError(error);
+        return {
+            success: false,
+            status: error?.response?.status,
+            message: errorMsg,
+        };
+    }
+}
+
+type ApiResponseDelete =
+    | { success: true }
+    | { success: false; message: string };
+export async function deleteBooking(
+    id: number,
+    guestId: number,
+): Promise<ApiResponseDelete> {
+    try {
+        // throw new Error('something went wrong ')
+
+        await axiosPrivate.delete(`/api/bookings/${id}/`, {
+            params: {
+                guestId: guestId,
+            },
+        });
+        return {
+            success: true,
+        };
+    } catch (error: any) {
+        const message =
+            error?.response?.data?.detail ||
+            error?.response?.data?.message ||
+            error?.response?.statusText ||
+            "Something went wrong";
+
+        return {
+            success: false,
+            message,
+        };
     }
 }

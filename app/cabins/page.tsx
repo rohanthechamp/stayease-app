@@ -3,6 +3,8 @@ import CabinList from "../_components/CabinList";
 import Spinner from "../_components/Spinner";
 import Filter from "../_components/Filter";
 import ReservationReminder from "../_components/ReservationReminder";
+import { getCabins } from "../_lib/data-service";
+import { Cabin } from "@/types/cabin";
 
 export const revalidate = 3600; // ISR is here
 // export const revalidate = 6;
@@ -15,7 +17,8 @@ type Props = {
   searchParams: Record<string, string | undefined>;
 };
 
-export default function Page({ searchParams }: Props) {
+export default async function Page({ searchParams }: Props) {
+  const cabins: Cabin[] = await getCabins();
   const filter: string = searchParams?.capacity ?? "all";
   // console.log("searchParams", searchParams);
 
@@ -34,7 +37,7 @@ export default function Page({ searchParams }: Props) {
       </div>
 
       <Suspense fallback={<Spinner />} key={filter}>
-        <CabinList filter={filter} />
+        <CabinList filter={filter} cabins={cabins} />
       </Suspense>
 
       <ReservationReminder/>
