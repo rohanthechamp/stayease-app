@@ -1,20 +1,21 @@
-// import { Country } from "@/types/booking";
 import {
     Booking,
-    BookingAPI,
     bookingDataType,
     Country,
     formDataType,
     Settings,
 } from "@/types/booking";
-import { axiosPrivate } from "./axiosClient";
+import axiosClient, { axiosPrivate } from "./axiosClient";
+
 import { Cabin, FilterValue, SortValue } from "@/types/cabin";
 import { format } from "date-fns";
-import { BASE_URL, getError } from "./helpers";
-
-import { AxiosError } from "axios";
+import { getError } from "./helpers";
 import { cache } from "react";
-import { revalidatePath } from "next/cache";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export async function getCountries(): Promise<Country[]> {
     const res = await fetch(
         "https://restcountries.com/v3.1/all?fields=name,cca2,flags",
@@ -33,25 +34,7 @@ export async function getCountries(): Promise<Country[]> {
 
     return countries.sort().reverse();
 }
-// type Country = {
-//   name: string;
-//   code: string;
-// };
 
-// export  function getCountries(): Promise<Country[]> {
-//   return [
-//     { name: "India", code: "IN" },
-//     { name: "United States", code: "US" },
-//     { name: "United Kingdom", code: "GB" },
-//     { name: "Canada", code: "CA" },
-//     { name: "Australia", code: "AU" },
-//     { name: "Germany", code: "DE" },
-//     { name: "France", code: "FR" },
-//     { name: "Italy", code: "IT" },
-//     { name: "Japan", code: "JP" },
-//     { name: "Brazil", code: "BR" },
-//   ];
-// }
 type Params = {
     discount?: string;
     ordering?: string;
@@ -63,9 +46,6 @@ type PaginatedResponse<T> = {
     previous: string | null;
     results: T[];
 };
-// type SingleCabinResponse<T> = {
-//     data: T;
-// };
 
 export const getCabins = async (
     sortValue: SortValue = "all",
@@ -74,7 +54,7 @@ export const getCabins = async (
 ): Promise<Cabin[]> => {
     try {
         if (sortValue === "all" && filterValue === "all") {
-            const { data } = await axiosPrivate.get("api/cabins/");
+            const { data } = await axiosClient.get("guest_portal/cabins/");
             return data?.results || [];
         }
         const params: Params = {};
@@ -103,7 +83,7 @@ export const getCabins = async (
         if (pageValue && pageValue > 0) {
             params.pagenumber = pageValue;
         }
-        const { data } = await axiosPrivate.get<PaginatedResponse<Cabin>>(
+        const { data } = await axiosClient.get<PaginatedResponse<Cabin>>(
             "api/cabins/",
             { params },
         );
@@ -126,19 +106,21 @@ export const getCabins = async (
 };
 
 // SINGLE cabin
-export async function getCabin(id: string): Promise<Cabin> {
-    // console.log('Entered in Get Cabin Function', id, typeof id);
+export async function getCabin(id: string): Promise<Cabin | string> {
+    try {
+        const response = await axiosClient.get(`guest_portal/cabins/${id}/`);
 
-    const response = await axiosPrivate.get(`api/cabins/${id}/`);
-    // console.log('getCabin RESULTS -', response)
-    // console.log(response ? /'yes' : 'no');
-    return response.data;
+        return response.data;
+    } catch (error: any) {
+        return getError(error);
+    }
 }
 
 export async function getSettings(): Promise<Settings> {
-    const res = await axiosPrivate.get("api/settings/");
+    const res = await axiosClient.get("guest_portal/settings/");
+    console.log("getSettings", res.data);
 
-    const data = res.data[0];
+    const data = res.data;
 
     const settingsData: Settings = {
         id: data.id,
@@ -162,7 +144,9 @@ export async function getCabinBookedDates(
 ): Promise<CabinBookedDate[]> {
     // console.log('cabin id',cabinId)
 
-    const res = await axiosPrivate.get(`/api/cabins/${cabinId}/booked-dates/`);
+    const res = await axiosClient.get(
+        `guest_portal/cabins/${cabinId}/booked-dates/`,
+    );
 
     const data = res.data;
 
@@ -176,9 +160,10 @@ export async function getCabinBookedDates(
 }
 
 export const getGuest = cache(async (email: string) => {
-    const res = await fetch(`${BASE_URL}/api/guests?email=${email}`, {
+    const res = await fetch(`${BASE_URL}guest_portal/guests?email=${email}`, {
         cache: "no-store", // always fresh
     });
+    console.log("getGuest", res);
 
     if (res.status === 404) return null;
     if (!res.ok) throw new Error("Failed to fetch guest");
@@ -186,21 +171,40 @@ export const getGuest = cache(async (email: string) => {
     return res.json();
 });
 
-export async function createGuest(newGuest: {
+type guestCredentials = {
     email: string;
-    fullName: string;
-}) {
+    fullName?: string | null;
+    password?: string | null;
+    isOAuthUser: boolean;
+};
+
+type guestCreationResponse = {
+    success: boolean;
+    message: string;
+};
+
+export async function createGuest(
+    newGuest: guestCredentials,
+): Promise<guestCreationResponse> {
     try {
-        const response = await axiosPrivate.post(`api/guests/`, {
-            email: newGuest.email,
-            fullName: newGuest.fullName,
+        const response = await axiosClient.post(`guest_portal/guests/`, {
+            ...newGuest,
         });
-        return response.data;
+
+        if (response.status === 201) {
+            return {
+                success: true,
+                message: response.data[0] || "Guest created successfully",
+            };
+        }
+
+        return { success: false, message: "Unexpected response status" };
     } catch (error: any) {
-        console.error("Error creating guest:", error.response?.data);
-        throw new Error("Guest creation failed");
+        const errMsg = getError(error);
+        return { success: false, message: errMsg || "Guest creation failed" };
     }
 }
+
 export async function updateGuest(
     guestId: number,
     updatedGuest: {
@@ -209,10 +213,17 @@ export async function updateGuest(
         countryFlag?: string;
     },
 ) {
+
     try {
+        const session = await getServerSession(authOptions);
         const { data, status } = await axiosPrivate.patch(
-            `api/guests/${guestId}/`,
+            `guest_portal/guest/${guestId}/`,
             updatedGuest,
+            {
+                headers: {
+                    Authorization: `Bearer ${session?.accesstoken}`,
+                },
+            },
         );
         console.log("updateGuest data", data);
 
@@ -237,9 +248,16 @@ export async function createBooking(
     const BookingData = { ...bookingData, ...formData };
     console.log("BookingData :- ", BookingData);
     try {
+        const session = await getServerSession(authOptions);
         const { data, status } = await axiosPrivate.post(
-            `api/bookings/`,
+            `guest_portal/bookings/create/`,
             BookingData,
+
+            {
+                headers: {
+                    Authorization: `Bearer ${session?.accesstoken}`,
+                },
+            },
         );
         console.log("Success ☺️☺️☺️", data, status);
         return { success: true, status, data };
@@ -258,7 +276,16 @@ export async function createBooking(
 
 export async function getAllGuestBookings(guestId: number): Promise<Booking[]> {
     try {
-        const { data } = await axiosPrivate.get(`/api/guests/${guestId}/bookings/`);
+        const session = await getServerSession(authOptions);
+        const { data } = await axiosPrivate.get(
+            `guest_portal/guest/bookings/${guestId}/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${session?.accesstoken}`,
+                },
+            },
+        );
+        console.log("getAllGuestBookings", data);
 
         return (data || []).map((item: any) => ({
             id: item.id,
@@ -293,12 +320,21 @@ export async function getBookingData(
     if (!bookingId) {
         throw new Error("Invalid bookingId");
     }
-    const { data } = await axiosPrivate.get(`api/bookings/${bookingId}/minimal/`);
+    const session = await getServerSession(authOptions);
+    const response = await axiosPrivate.get(
+        `guest_portal/bookings/${bookingId}/minimal/`,
+        {
+            headers: {
+                Authorization: `Bearer ${session?.accesstoken}`,
+            },
+        },
+    );
+    console.log('getBookingData', response.data)
 
     const impData = {
-        observations: data.observations,
-        numGuests: data.numGuests,
-        maxCapacity: data.cabin__maxCapacity,
+        observations: response.data.observations,
+        numGuests: response.data.numGuests,
+        maxCapacity: response.data.cabin__maxCapacity,
     };
 
     return impData;
@@ -308,11 +344,17 @@ export async function updateBooking(
     bookingId: number,
     UpdateBookingData: ApiResponseBookingData,
 ): Promise<ApiResponse> {
-    console.log("UpdateBookingData :- ", UpdateBookingData);
+
     try {
+        const session = await getServerSession(authOptions);
         const { data, status } = await axiosPrivate.patch(
-            `api/bookings/${bookingId}/`,
+            `guest_portal/bookings/${bookingId}/`,
             UpdateBookingData,
+            {
+                headers: {
+                    Authorization: `Bearer ${session?.accesstoken}`,
+                },
+            }
         );
         console.log("Success ☺️☺️☺️", data, status);
         return { success: true, status, data };
@@ -335,13 +377,23 @@ export async function deleteBooking(
     guestId: number,
 ): Promise<ApiResponseDelete> {
     try {
-        // throw new Error('something went wrong ')
+        const session = await getServerSession(authOptions);
 
-        await axiosPrivate.delete(`/api/bookings/${id}/`, {
+        const response = await axiosPrivate.delete(`guest_portal/bookings/${id}/`, {
             params: {
                 guestId: guestId,
             },
+            headers: {
+                Authorization: `Bearer ${session?.accesstoken}`,
+            },
         });
+
+        if (response.status === 404) {
+            return {
+                success: true,
+            };
+        }
+
         return {
             success: true,
         };
@@ -357,4 +409,27 @@ export async function deleteBooking(
             message,
         };
     }
+}
+
+export async function getJwtTokens(email: string) {
+    // Changed method to POST because GET requests cannot have a body
+    const url = `${BASE_URL}guest_portal/auth/google/`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email: email,
+        }),
+    });
+    console.log("getJwtTokens", response);
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to fetch JWT tokens");
+    }
+
+    const jwtData = await response.json();
+    return jwtData;
 }

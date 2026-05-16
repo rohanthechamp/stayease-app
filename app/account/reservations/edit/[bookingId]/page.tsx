@@ -12,8 +12,10 @@ type PageProps = {
 };
 
 const page = async ({ params }: PageProps) => {
+    console.log('   /reservations/edit/${id} ')
 
     const response = await getBookingData(params.bookingId)
+    console.log('booking ,',response)
     const formData = response
     const maxCapacity=formData.numGuests
 

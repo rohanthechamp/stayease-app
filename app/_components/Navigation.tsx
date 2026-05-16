@@ -1,14 +1,25 @@
 import { getServerSession } from "next-auth";
 import Link from "next/link";
+
+import {
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
+
+import {
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/24/solid";
+
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
+
 export default async function Navigation() {
   const session = await getServerSession(authOptions);
-  
+  console.log( 'Navigation' ,session)
 
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
+
+        {/* Cabins */}
         <li>
           <Link
             href="/cabins"
@@ -17,6 +28,8 @@ export default async function Navigation() {
             Cabins
           </Link>
         </li>
+
+        {/* About */}
         <li>
           <Link
             href="/about"
@@ -26,8 +39,9 @@ export default async function Navigation() {
           </Link>
         </li>
 
-        <li>
-          {session?.user?.image ? (
+        {/* Auth Navigation */}
+        {session?.user?.image ? (
+          <li>
             <Link
               href="/account"
               className="hover:text-accent-400 transition-colors flex items-center gap-4 group"
@@ -38,21 +52,43 @@ export default async function Navigation() {
                 alt={session.user.name || "Guest profile"}
                 referrerPolicy="no-referrer"
               />
-              <span className="font-medium">Guest area</span>
-            </Link>
-          ) : (
-            <Link
-              href="/signin"
-              className="hover:text-accent-400 transition-colors flex items-center gap-3 group"
-            >
-              {/* The Sign In Icon - Arrow entering the box */}
-              <ArrowRightStartOnRectangleIcon className="h-6 w-6 text-primary-600 group-hover:text-accent-400 transition-colors" />
-              <span className="font-medium text-accent-100 group-hover:text-accent-400 transition-colors">
-                Sign In
+
+              <span className="font-medium">
+                Guest area
               </span>
             </Link>
-          )}
-        </li>
+          </li>
+        ) : (
+          <>
+            {/* Sign Up */}
+            <li>
+              <Link
+                href="/signup"
+                className="hover:text-accent-400 transition-colors flex items-center gap-3 group"
+              >
+                <UserPlusIcon className="h-6 w-6 text-primary-600 group-hover:text-accent-400 transition-colors" />
+
+                <span className="font-medium text-accent-100 group-hover:text-accent-400 transition-colors">
+                  Sign Up
+                </span>
+              </Link>
+            </li>
+
+            {/* Sign In */}
+            <li>
+              <Link
+                href="/signin"
+                className="hover:text-accent-400 transition-colors flex items-center gap-3 group"
+              >
+                <ArrowRightStartOnRectangleIcon className="h-6 w-6 text-primary-600 group-hover:text-accent-400 transition-colors" />
+
+                <span className="font-medium text-accent-100 group-hover:text-accent-400 transition-colors">
+                  Sign In
+                </span>
+              </Link>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

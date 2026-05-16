@@ -3,7 +3,7 @@
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import { createBooking, deleteBooking, getAllGuestBookings, updateBooking, updateGuest } from "./data-service";
+import { createBooking, deleteBooking, updateBooking, updateGuest } from "./data-service";
 import { redirect } from "next/navigation";
 import { bookingDataType } from "@/types/booking";
 import { validateBookingForm } from "./helpers";
@@ -61,7 +61,7 @@ export const handleBookingFormAction = async (
         observations,
         created_at,
     };
-    console.log(cleanedFormData)
+    console.log(bookingData,cleanedFormData)
 
     // ✅ API call
     const response = await createBooking(bookingData, cleanedFormData);
@@ -121,11 +121,14 @@ export const handleBookingDeleteFormAction = async (
     const guestId = session?.user?.guestId;
 
     const response = await deleteBooking(bookingId, guestId);
+    console.log(
+        'handleBookingDeleteFormAction',response
+    )
 
     if (!response.success) {
         return { success: false, message: response.message };
     }
 
-    revalidatePath('/account/reservations');
+    // revalidatePath('/account/reservations');
     return { success: true };
 };

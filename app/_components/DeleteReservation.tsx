@@ -103,9 +103,7 @@ import { toast } from "react-hot-toast";
 
 type Props = {
   bookingId: number;
-  onDelete: (
-    bookingId: number,
-  ) => Promise<{ success: boolean; message?: string }>;
+  onDelete: (bookingId: number) => Promise<void>;
 };
 
 function DeleteReservation({ bookingId, onDelete }: Props) {

@@ -8,7 +8,7 @@ export default async function Page() {
   // CHANGE
   const countries: Country[] = await getCountries();
   console.log('all Countries',countries.slice(0,2),countries.length)
-
+  console.log('useEffect Countries')
   const nationality = "us";
   return (
     <div>

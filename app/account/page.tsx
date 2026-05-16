@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
-import React from 'react'
 import { authOptions } from '../api/auth/[...nextauth]/route';
+import AccountWelcome from '../_components/AccountWelcome';
 export const metadata = {
   title: "Account",
 
@@ -9,12 +9,10 @@ const page = async () => {
   const session = await getServerSession(authOptions);
 
   return (
-    <div>
-
-      <h2 className="font-semibold text-2xl text-accent-400 mb-7">
-        Welcome to account page -  {String(session?.user?.name).split(' ')[2]}
-      </h2>
-    </div>
+    <main className="min-h-screen bg-black px-4 py-12 text-zinc-100 flex items-center justify-center">
+      {/* Passing session object as a prop directly to our client shell */}
+      <AccountWelcome session={session} />
+    </main>
   )
 }
 

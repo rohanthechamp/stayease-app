@@ -4,6 +4,7 @@ import Cabin from "@/app/_components/Cabinn";
 import Reservation from "@/app/_components/Reservation";
 import Spinner from "@/app/_components/Spinner";
 import { getCabin, getCabins } from "@/app/_lib/data-service";
+import { Cabin as CabinType } from "@/types/cabin"
 import type { Metadata } from "next";
 import { Suspense } from "react";
 // import NotFound from "@/app/not-found";
@@ -15,23 +16,22 @@ type PageProps = {
     searchParams: string;
 };
 
-export async function generateMetadata({
-    params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     try {
-        const cabin = await getCabin(params.cabinId);
+        // If getCabin fails, it throws and jumps straight to the catch block
+        const cabin: CabinType = await getCabin(params.cabinId);
 
         return {
             title: `Cabin ${cabin.name}`,
         };
     } catch (error) {
-        // Fallback metadata if cabin not found or API fails
-        console.log(error);
+        console.error(error);
         return {
-            title: "Cabin",
+            title: "Cabin Error", // Clean fallback configuration
         };
     }
 }
+
 
 export async function generateStaticParams() {
     const response = await getCabins();
@@ -44,7 +44,7 @@ export default async function Page({ params }: PageProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // const cabin = await getCabin(params.cabinId);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cabin = await getCabin(params.cabinId);
+    const cabin: CabinType | string = await getCabin(params.cabinId);
 
     return (
         <div className="max-w-6xl mx-auto mt-8">

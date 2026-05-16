@@ -1,7 +1,7 @@
 import { DateRange } from "react-day-picker";
 import { CabinBookedDate } from "./data-service";
+import axiosClient from "./axiosClient";
 
-export const BASE_URL = "http://127.0.0.1:8000/";
 function parseDate(str: string) {
     const [year, month, day] = str.split(" ").map(Number);
     return new Date(year, month - 1, day);
@@ -91,3 +91,41 @@ export const getError = (error: any): string => {
 
     return defaultMsg;
 };
+
+
+export async function refreshAccessToken(token: any) {
+
+    try {
+
+        const response = await axiosClient.post(
+            "guest_portal/auth/refresh/",
+            {
+                refreshtoken: token.refreshtoken
+            }
+        )
+
+
+
+        return {
+            ...token,
+
+            accesstoken: response.data.data.accesstoken,
+
+            refreshtoken:
+                response.data.data.refreshtoken,
+            accessTokenExpires:
+                Date.now() + 15 * 60 * 1000,
+
+            error: null
+        }
+
+    } catch (error) {
+
+        console.log("REFRESH TOKEN ERROR", error)
+
+        return {
+            ...token,
+            error: "RefreshAccessTokenError",
+        }
+    }
+}

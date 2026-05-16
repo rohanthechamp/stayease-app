@@ -12,9 +12,7 @@ export const formatDistanceFromNow = (dateStr: string) =>
 
 type Props = {
   booking: BookingAPI;
-  onDelete: (
-    bookingId: number,
-  ) => Promise<{ success: boolean; message?: string }>;
+  onDelete: (bookingId: number) => Promise<void>;
 
 };
 function ReservationCard({ booking, onDelete }: Props) {

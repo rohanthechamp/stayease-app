@@ -21,7 +21,7 @@ const UpdateProfileForm = ({ children, data }: Props) => {
     const { data: session, update } = useSession(); // You'll need to import this
     const { user } = useUser();
     const [selectedCountry, setSelectedCountry] = useState<string>(() => {
-        const saved = localStorage.getItem("userSelectedCountry") || "us";
+        const saved = localStorage.getItem("userSelectedCountry");
         return saved;
     });
     // const [isSubmit, setIsSubmit] = useState(false);
@@ -84,13 +84,15 @@ const UpdateProfileForm = ({ children, data }: Props) => {
                 <div className="flex items-center justify-between">
                     <label htmlFor="nationality">Where are you from?</label>
 
-                    <Image
-                        src={flag}
-                        alt="Country flag"
-                        className="h-5 rounded-sm"
-                        width={30}
-                        height={20}
-                    />
+                    {selectedCountry ? (
+                        <Image
+                            src={flag}
+                            alt="Country flag"
+                            className="h-5 rounded-sm"
+                            width={30}
+                            height={20}
+                        />
+                    ) : null}
                 </div>
 
                 {React.cloneElement(children as React.ReactElement, {

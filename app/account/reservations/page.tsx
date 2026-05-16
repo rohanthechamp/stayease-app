@@ -8,8 +8,8 @@ import ReservationList from "@/app/_components/ReservationList";
 export default async function Page() {
   // CHANGE
   const session = await getServerSession(authOptions);
-  const guestId = session?.user?.guestId;
-  console.log("guest id", guestId);
+  const guestId = session?.user.guestId;
+  console.log("guest id:-", guestId);
 
   const bookings: BookingAPI[] = await getAllGuestBookings(guestId);
   console.log('getAllGuestBookings',bookings)
