@@ -38,7 +38,7 @@ export const handleFormAction = async (formData: FormData) => {
 
 type ActionState = {
     success: boolean;
-    message?: string;
+    message: string;
 };
 
 export const handleBookingFormAction = async (
@@ -62,13 +62,13 @@ export const handleBookingFormAction = async (
         observations,
         created_at,
     };
-    console.log(bookingData,cleanedFormData)
+    console.log(bookingData, cleanedFormData)
 
     // ✅ API call
     const response = await createBooking(bookingData, cleanedFormData);
 
     if (!response.success) {
-        return { success: false, message: response.message };
+        return { success: false, message: response.message || '' };
     }
     revalidatePath('/account/reservations');
     redirect('/cabins/thankyou');
@@ -92,24 +92,26 @@ export const handleBookingUpdateFormAction = async (
     if (!result.success) {
         return { success: false, message: result.message };
     }
-    const { numGuests, observations } = result.data;
 
-    const cleanedFormData = {
-        observations,
-        numGuests,
-    };
-    console.log(cleanedFormData)
 
-    // ✅ API call
+    const { numGuests, observations } = result.data
 
-    const response = await updateBooking(bookingId, cleanedFormData)
+
+
+    //  API call
+
+    const response = await updateBooking(bookingId, {
+        observations: observations || '', numGuests
+    })
     // const response = { success: true, message: '' }
     if (!response.success) {
-        return { success: false, message: response.message };
+        return { success: false, message: response.message || '' };
     }
     revalidatePath('/account/reservations');
 
     redirect('/account/reservations');
+    // fallback code
+    return { success: true, message: "" };
 
 };
 
@@ -123,7 +125,7 @@ export const handleBookingDeleteFormAction = async (
 
     const response = await deleteBooking(bookingId, guestId);
     console.log(
-        'handleBookingDeleteFormAction',response
+        'handleBookingDeleteFormAction', response
     )
 
     if (!response.success) {

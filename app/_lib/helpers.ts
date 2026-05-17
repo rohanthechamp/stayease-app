@@ -29,10 +29,12 @@ export function isRangeOverlapping(
     });
 }
 
-type BookingFormValues = {
-    numGuests: number;
-    observations?: string;
-};
+type BookingFormValues =
+    {
+        numGuests: number;
+        observations?: string;
+    }
+
 
 type ValidationResult =
     | { success: true; data: BookingFormValues }
@@ -45,9 +47,9 @@ export function validateBookingForm(formData: FormData): ValidationResult {
     >;
 
     const numGuests = Number(formObject.numGuests);
-    const observations = formObject.observations?.trim();
+    const observations = formObject.observations?.trim() ;
 
-    // validation
+    // validation.
     if (!numGuests || numGuests <= 0) {
         return {
             success: false,
@@ -62,11 +64,12 @@ export function validateBookingForm(formData: FormData): ValidationResult {
         };
     }
 
+
     return {
         success: true,
         data: {
             numGuests,
-            observations,
+            observations    ,
         },
     };
 }
@@ -92,40 +95,28 @@ export const getError = (error: any): string => {
     return defaultMsg;
 };
 
-
 export async function refreshAccessToken(token: any) {
-
     try {
-
-        const response = await axiosClient.post(
-            "guest_portal/auth/refresh/",
-            {
-                refreshtoken: token.refreshtoken
-            }
-        )
-
-
+        const response = await axiosClient.post("guest_portal/auth/refresh/", {
+            refreshtoken: token.refreshtoken,
+        });
 
         return {
             ...token,
 
             accesstoken: response.data.data.accesstoken,
 
-            refreshtoken:
-                response.data.data.refreshtoken,
-            accessTokenExpires:
-                Date.now() + 15 * 60 * 1000,
+            refreshtoken: response.data.data.refreshtoken,
+            accessTokenExpires: Date.now() + 15 * 60 * 1000,
 
-            error: null
-        }
-
+            error: null,
+        };
     } catch (error) {
-
-        console.log("REFRESH TOKEN ERROR", error)
+        console.log("REFRESH TOKEN ERROR", error);
 
         return {
             ...token,
             error: "RefreshAccessTokenError",
-        }
+        };
     }
 }

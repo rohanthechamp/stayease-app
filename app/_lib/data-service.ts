@@ -341,9 +341,16 @@ export async function getBookingData(
     return impData;
 }
 
+
+export type ApiResponseBookingData1 = {
+    observations: string;
+    numGuests: number;
+
+};
+
 export async function updateBooking(
     bookingId: number,
-    UpdateBookingData: ApiResponseBookingData,
+    UpdateBookingData: ApiResponseBookingData1,
 ): Promise<ApiResponse> {
 
     try {

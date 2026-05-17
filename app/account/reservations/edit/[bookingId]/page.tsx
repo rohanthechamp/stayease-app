@@ -12,7 +12,7 @@ type PageProps = {
 };
 
 const page = async ({ params }: PageProps) => {
-    console.log('   /reservations/edit/${id} ')
+    // console.log('   /reservations/edit/${id} ')
 
     const response = await getBookingData(params.bookingId)
     console.log('booking ,',response)

@@ -18,7 +18,7 @@ const ReservationList = ({ bookings }: { bookings: BookingAPI[] }) => {
       state.filter((booking) => booking.id !== bookingId)
   );
 
-  async function handleDelete(bookingId: number): Promise<ApiResponseDelete> {
+  async function handleDelete(bookingId: number) :Promise < ApiResponseDelete >{
     setError(null);
 
     // update UI immediately
@@ -47,7 +47,7 @@ const ReservationList = ({ bookings }: { bookings: BookingAPI[] }) => {
       router.refresh(); // rollback UI from real server data
       return {
         success: false,
-        message: "Delete failed",
+        message:"Delete failed",
       };
     }
   }
