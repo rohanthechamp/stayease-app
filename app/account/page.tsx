@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+
 import AccountWelcome from '../_components/AccountWelcome';
+import { authOptions } from '../_lib/auth';
 export const metadata = {
   title: "Account",
 

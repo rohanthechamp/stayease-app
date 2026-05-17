@@ -2,11 +2,12 @@
 
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+
 import { createBooking, deleteBooking, updateBooking, updateGuest } from "./data-service";
 import { redirect } from "next/navigation";
 import { bookingDataType } from "@/types/booking";
 import { validateBookingForm } from "./helpers";
+import { authOptions } from "./auth";
 
 export const handleFormAction = async (formData: FormData) => {
     const session = await getServerSession(authOptions);

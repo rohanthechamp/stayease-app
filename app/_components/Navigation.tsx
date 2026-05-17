@@ -8,8 +8,9 @@ import {
 import {
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/solid";
+import { authOptions } from "../_lib/auth";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 
 export default async function Navigation() {
   const session = await getServerSession(authOptions);

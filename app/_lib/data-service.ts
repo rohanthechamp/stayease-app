@@ -11,8 +11,9 @@ import { Cabin, FilterValue, SortValue } from "@/types/cabin";
 import { format } from "date-fns";
 import { getError } from "./helpers";
 import { cache } from "react";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+
 import { getServerSession } from "next-auth";
+import { authOptions } from "./auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 

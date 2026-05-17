@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 // import ReservationCard from "../../_components/ReservationCard";
 import { BookingAPI } from "@/types/booking";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 import { getAllGuestBookings } from "@/app/_lib/data-service";
 import ReservationList from "@/app/_components/ReservationList";
+import { authOptions } from "@/app/_lib/auth";
 
 export default async function Page() {
   // CHANGE
