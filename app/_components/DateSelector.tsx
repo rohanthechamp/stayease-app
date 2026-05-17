@@ -91,7 +91,15 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
       return;
     }
 
-    setRange(selected);
+    // Ensure both from and to are present before setting range
+    if (!selected.from || !selected.to) {
+      resetRange();
+      return;
+    }
+
+    setRange({ from: selected.from!, to: selected.to! });
+    
+
   }
 
   return (
