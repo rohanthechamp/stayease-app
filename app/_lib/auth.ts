@@ -1,8 +1,9 @@
 import GoogleProvider from "next-auth/providers/google";
 import { createGuest, getGuest, getJwtTokens } from "@/app/_lib/data-service";
 import { refreshAccessToken } from "@/app/_lib/helpers";
+import { AuthOptions } from "next-auth";
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.AUTH_GOOGLE_ID!,
@@ -15,7 +16,7 @@ export const authOptions = {
     },
 
     callbacks: {
-        async signIn({ user }: { user: any }) {
+        async signIn({ user }) {
             try {
                 const existingGuest = await getGuest(user.email);
 
@@ -34,7 +35,7 @@ export const authOptions = {
             }
         },
 
-        async jwt({ token, user, trigger }: any) {
+        async jwt({ token, user, trigger }) {
             if (user) {
                 const guest = await getGuest(user.email);
                 const jwtData = await getJwtTokens(user.email);
@@ -65,13 +66,13 @@ export const authOptions = {
             return token;
         },
 
-        async session({ session, token }: any) {
+        async session({ session, token }) {
             session.user.guestId = token.guestId;
             session.user.nationalID = token.nationalID;
             session.user.nationality = token.nationality;
             session.user.countryFlag = token.countryFlag;
 
-            session.accesstoken = token.accesstoken;
+            session.accessToken = token.accesstoken;
             session.refreshtoken = token.refreshtoken;
 
             return session;
