@@ -5,7 +5,6 @@ A production-style customer-facing hotel booking website built with **Next.js 14
 It supports Google sign-in, guest account creation, cabin browsing, date-based booking, reservation management, and secure API access through a custom guest authentication flow.
 
 **Live Demo:** https://hote-customer-facing-website.vercel.app  
-**Backend API:** your deployed Django backend URL
 
 ---
 
