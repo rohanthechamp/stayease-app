@@ -4,6 +4,7 @@ import DeleteReservation from "./DeleteReservation";
 import { BookingAPI } from "@/types/booking";
 import Image from "next/image";
 import default_cabin from "@/public/hotel-cabin.jpg";
+import { ApiResponseDelete } from "../_lib/data-service";
 
 export const formatDistanceFromNow = (dateStr: string) =>
   formatDistance(parseISO(dateStr), new Date(), {
@@ -12,7 +13,7 @@ export const formatDistanceFromNow = (dateStr: string) =>
 
 type Props = {
   booking: BookingAPI;
-  onDelete: (bookingId: number) => Promise<void>;
+  onDelete: (bookingId: number) => Promise<ApiResponseDelete>;
 
 };
 function ReservationCard({ booking, onDelete }: Props) {

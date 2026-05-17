@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ReservationCard from "./ReservationCard";
 import { handleBookingDeleteFormAction } from "../_lib/action";
 import { BookingAPI } from "@/types/booking";
+import { ApiResponseDelete } from "../_lib/data-service";
 
 const ReservationList = ({ bookings }: { bookings: BookingAPI[] }) => {
   const router = useRouter();
@@ -17,7 +18,7 @@ const ReservationList = ({ bookings }: { bookings: BookingAPI[] }) => {
       state.filter((booking) => booking.id !== bookingId)
   );
 
-  async function handleDelete(bookingId: number) {
+  async function handleDelete(bookingId: number): Promise<ApiResponseDelete> {
     setError(null);
 
     // update UI immediately
@@ -29,14 +30,25 @@ const ReservationList = ({ bookings }: { bookings: BookingAPI[] }) => {
       const response = await handleBookingDeleteFormAction(bookingId);
 
       if (!response.success) {
-        throw new Error(response.message || "Failed to delete booking");
+        return {
+          success: false,
+          message: "Delete failed",
+        };
       }
 
       // re-fetch server state
       router.refresh();
+      return {
+        success: true,
+      };
     } catch (err: any) {
       setError(err.message || "Delete failed");
+
       router.refresh(); // rollback UI from real server data
+      return {
+        success: false,
+        message: "Delete failed",
+      };
     }
   }
 

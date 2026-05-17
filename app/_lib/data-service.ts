@@ -370,7 +370,7 @@ export async function updateBooking(
     }
 }
 
-type ApiResponseDelete =
+export type ApiResponseDelete =
     | { success: true }
     | { success: false; message: string };
 export async function deleteBooking(
