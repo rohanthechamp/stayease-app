@@ -152,10 +152,10 @@ export async function getCabinBookedDates(
     const data = res.data;
 
     const formatted: CabinBookedDate[] = data.map((item: any) => ({
-        startDate: format(new Date(item.startDate), "yyyy M d"),
-        endDate: format(new Date(item.endDate), "yyyy M d"),
+        startDate: new Date(item.startDate),
+        endDate: new Date(item.endDate),
     }));
-    // console.log('formatted data',res)
+
 
     return formatted;
 }
