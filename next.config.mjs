@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const hostName = new URL(process.env.NEXT_PUBLIC_API_URL).hostname;
+const hostName = process.env.NEXT_PUBLIC_API_URL;
 
 const nextConfig = {
   images: {
