@@ -1,29 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Wild Oasis — Customer-Facing Booking Website
 
-## Getting Started
+A production-style customer-facing hotel booking website built with **Next.js 14**, **NextAuth**, and a **Django REST Framework** backend.
 
-First, run the development server:
+It supports Google sign-in, guest account creation, cabin browsing, date-based booking, reservation management, and secure API access through a custom guest authentication flow.
+
+**Live Demo:** https://hote-customer-facing-website.vercel.app  
+**Backend API:** your deployed Django backend URL
+
+---
+
+## What this project demonstrates
+
+This is more than a UI project. It shows:
+
+- Full-stack integration between **Next.js** and **Django REST Framework**
+- **Google OAuth login** with NextAuth
+- A **custom guest JWT system** for customer-facing authentication
+- Booking workflows with date validation and reservation rules
+- Server-side data fetching and protected routes
+- Production deployment on **Vercel** with a separate deployed backend
+- Practical handling of auth, state, caching, and API contracts
+
+---
+
+## Features
+
+- Browse available cabins
+- View cabin details and booked dates
+- Google sign-in for guests
+- Automatic guest creation in the backend
+- Custom access and refresh token flow for guest users
+- Create bookings from the customer portal
+- View guest reservations
+- Edit and delete bookings
+- Profile page for guest details
+- Responsive UI for desktop and mobile
+
+---
+
+## Architecture
+
+### Frontend
+- Next.js 14 App Router
+- React
+- NextAuth
+- Server Components + Server Actions
+- Optimistic UI for smoother interactions
+- TypeScript
+
+### Backend
+- Django
+- Django REST Framework
+- Custom guest authentication
+- JWT-based guest access and refresh tokens
+- PostgreSQL
+- Redis caching
+- Celery worker for async tasks
+- CORS handling for frontend access
+
+### Authentication Flow
+1. User signs in with Google
+2. NextAuth receives the authenticated Google identity
+3. Frontend checks whether the guest exists in the Django backend
+4. If not, a guest record is created
+5. Backend issues guest access and refresh tokens
+6. Tokens are attached to protected API requests
+7. Expired access tokens are refreshed automatically
+
+---
+
+## Tech Stack
+
+- **Frontend:** Next.js 14, React, TypeScript, NextAuth
+- **Backend:** Django, Django REST Framework
+- **Database:** PostgreSQL
+- **Cache:** Redis
+- **Background Jobs:** Celery
+- **Deployment:** Vercel + backend hosting platform
+- **Styling:** Tailwind CSS
+
+
+
+## Folder Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+app/
+├── _components/
+├── _context/
+├── _lib/
+├── about/
+├── account/
+├── api/
+├── cabins/
+├── signin/
+├── signup/
+└── ...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local Development
+Frontend
+npm install
+npm run dev
+Backend
+python -m venv venv
+source venv/bin/activate   # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Key Challenges Solved
+Custom auth flow for a customer-facing app without using Django’s default user model for guests
+Separating internal staff authentication from guest authentication
+Handling token expiry and refresh
+Keeping booking and reservation data consistent after deletes and updates
+Deploying a Next.js frontend with a separate backend
+Fixing production build issues caused by strict TypeScript and ESLint checks
 
-## Learn More
+## Live Link  https://hote-customer-facing-website.vercel.app
 
-To learn more about Next.js, take a look at the following resources:
+License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
+MIT
