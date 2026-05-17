@@ -10,7 +10,7 @@ It supports Google sign-in, guest account creation, cabin browsing, date-based b
 
 ## What this project demonstrates
 
-This is more than a UI project. It shows:
+
 
 - Full-stack integration between **Next.js** and **Django REST Framework**
 - **Google OAuth login** with NextAuth
