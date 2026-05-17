@@ -62,7 +62,7 @@ This is more than a UI project. It shows:
 2. NextAuth receives the authenticated Google identity
 3. Frontend checks whether the guest exists in the Django backend
 4. If not, a guest record is created
-5. Backend issues guest access and refresh tokens
+5. Backend issues with guest access and refresh tokens
 6. Tokens are attached to protected API requests
 7. Expired access tokens are refreshed automatically
 
@@ -109,12 +109,17 @@ app/
 - python manage.py runserver
 
 ### Key Challenges Solved
-Custom auth flow for a customer-facing app without using Django’s default user model for guests
-Separating internal staff authentication from guest authentication
-Handling token expiry and refresh
-Keeping booking and reservation data consistent after deletes and updates
-Deploying a Next.js frontend with a separate backend
-Fixing production build issues caused by strict TypeScript and ESLint checks
+
+- Designed a custom authentication flow for a customer-facing app without relying on Django’s default user model
+- Separated internal staff authentication from guest authentication systems
+- Implemented secure JWT lifecycle (access + refresh token handling)
+- Handled token expiry and refresh across server-side requests
+- Built booking flows with a consistent state after create/update/delete operations
+- Managed cache invalidation and real-time data consistency
+- Applied Next.js rendering strategies (Server Components, Server Actions, and optimised data fetching)
+- Implemented optimistic UI updates with proper rollback handling
+- Debugged and fixed production build issues caused by strict TypeScript constraints
+- Deployed a decoupled full-stack system (Next.js frontend + Django backend)
 
 ### Live Link  https://hote-customer-facing-website.vercel.app
 
