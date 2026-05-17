@@ -1,7 +1,7 @@
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { format, formatDistance, isPast, isToday, parseISO } from "date-fns";
 import DeleteReservation from "./DeleteReservation";
-import { BookingAPI } from "@/types/booking";
+import { Booking } from "@/types/booking";
 import Image from "next/image";
 import default_cabin from "@/public/hotel-cabin.jpg";
 import { ApiResponseDelete } from "../_lib/data-service";
@@ -12,7 +12,7 @@ export const formatDistanceFromNow = (dateStr: string) =>
   }).replace("about ", "");
 
 type Props = {
-  booking: BookingAPI;
+  booking: Booking;
   onDelete: (bookingId: number) => Promise<ApiResponseDelete>;
 
 };
@@ -27,7 +27,7 @@ function ReservationCard({ booking, onDelete }: Props) {
     numGuests,
     // status,
     created_at,
-    cabin: { name, image },
+    cabins: { name, image },
   } = booking;
 
   return (

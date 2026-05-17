@@ -19,7 +19,9 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     try {
         // If getCabin fails, it throws and jumps straight to the catch block
-        const cabin: CabinType = await getCabin(params.cabinId);
+
+        const cabin: CabinType  = await getCabin(params.cabinId);
+
 
         return {
             title: `Cabin ${cabin.name}`,
@@ -44,7 +46,7 @@ export default async function Page({ params }: PageProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // const cabin = await getCabin(params.cabinId);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cabin: CabinType | string = await getCabin(params.cabinId);
+    const cabin: CabinType  = await getCabin(params.cabinId);
 
     return (
         <div className="max-w-6xl mx-auto mt-8">

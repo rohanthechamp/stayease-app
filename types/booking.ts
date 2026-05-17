@@ -55,16 +55,17 @@ export type bookingDataType = {
   user?: number;
   startDate: Date | string | null;
   endDate: Date | string | null;
-  cabinPrice: number;
+  cabinPrice?: number;
   extrasPrice?: number;
-  totalPrice: number;
+  totalPrice?: number;
   status?: BookingStatus;
   isPaid?: boolean;
-  guest: number;
+  guest: number | undefined;
   cabin: number;
   numNights: number;
 
 };
+
 export type formDataType = {
   numGuests: number;
   created_at: Date | string;

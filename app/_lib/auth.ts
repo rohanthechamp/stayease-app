@@ -17,7 +17,11 @@ export const authOptions: AuthOptions = {
 
     callbacks: {
         async signIn({ user }) {
+            // 1. Guard clause: Ensure an email actually exists
+            if (!user.email) return false;
+
             try {
+
                 const existingGuest = await getGuest(user.email);
 
                 if (!existingGuest) {
@@ -29,14 +33,13 @@ export const authOptions: AuthOptions = {
                 }
 
                 return true;
-            } catch (error) {
-                console.log("ERROR on LOGIN", error);
+            } catch {
                 return false;
             }
         },
-
         async jwt({ token, user, trigger }) {
-            if (user) {
+            // 1. Check for user AND ensure user.email exists
+            if (user && user.email) {
                 const guest = await getGuest(user.email);
                 const jwtData = await getJwtTokens(user.email);
 
@@ -44,36 +47,39 @@ export const authOptions: AuthOptions = {
                 token.refreshtoken = jwtData.data.refreshtoken;
                 token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
 
-                token.guestId = guest?.id || null;
+                token.guestId = guest.id;
                 token.nationalID = guest?.nationalID || "";
                 token.nationality = guest?.nationality || "";
                 token.countryFlag = guest?.countryFlag || "";
             }
 
-            if (token.accessTokenExpires && Date.now() > token.accessTokenExpires) {
+            // Checking token expiration type safety
+            if (typeof token.accessTokenExpires === "number" && Date.now() > token.accessTokenExpires) {
                 return await refreshAccessToken(token);
             }
-            if (trigger === "update") {
+
+            // 2. Check for update trigger AND ensure token.email exists
+            if (trigger === "update" && token.email) {
                 const guest = await getGuest(token.email);
 
-                token.nationalID = guest?.nationalID;
-
-                token.nationality = guest?.nationality;
-
-                token.countryFlag = guest?.countryFlag;
+                // Standardizing fallbacks to match the strings above
+                token.nationalID = guest?.nationalID || "";
+                token.nationality = guest?.nationality || "";
+                token.countryFlag = guest?.countryFlag || "";
             }
 
             return token;
         },
 
         async session({ session, token }) {
-            session.user.guestId = token.guestId;
-            session.user.nationalID = token.nationalID;
-            session.user.nationality = token.nationality;
-            session.user.countryFlag = token.countryFlag;
+            session.user.guestId = token.guestId as number;
+            session.user.nationalID = token.nationalID as string;
+            session.user.nationality = token.nationality as string;
+            session.user.countryFlag = token.countryFlag as string;
 
-            session.accessToken = token.accesstoken;
-            session.refreshtoken = token.refreshtoken;
+            // Cast the tokens as strings to satisfy 'string | undefined'
+            session.accessToken = token.accesstoken as string;
+            session.refreshToken = token.refreshtoken as string;
 
             return session;
         },

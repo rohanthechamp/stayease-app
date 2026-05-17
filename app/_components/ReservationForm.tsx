@@ -37,10 +37,12 @@ function ReservationForm({
   const nights =
     range.from && range.to ? differenceInDays(range.to, range.from) : 0;
 
+  const guestID = session?.user.guestId
+
   const bookingData: bookingDataType = {
     startDate: range.from ? format(range.from, "yyyy-MM-dd") : null,
     endDate: range.to ? format(range.to, "yyyy-MM-dd") : null,
-    guest: session?.user?.guestId,
+    guest: guestID,
     extrasPrice: 0,
     cabin: cabin.id,
     numNights: nights,
@@ -52,7 +54,7 @@ function ReservationForm({
   // ✅   4 — prevent invalid booking
   // const isDateSelected = range.from && range.to;
   const hasConflict = isRangeOverlapping(range, bookedDates);
-  const isValidRange = range.from && range.to && !hasConflict;
+  const isValidRange = Boolean(range.from) && Boolean(range.to) && !hasConflict;
 
   return (
     <div className="scale-[1.01]">

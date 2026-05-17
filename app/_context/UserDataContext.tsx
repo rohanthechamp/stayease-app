@@ -38,9 +38,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (status === "authenticated" && session?.user) {
             const userInfo: userDatatype = {
-                name: session?.user?.name,
-                email: session.user.email,
-                image: session.user.image,
+                name: session?.user?.name|| "",
+                email: session.user.email|| "",
+                image: session.user.image|| "",
             };
             setUser(userInfo);
             localStorage.setItem("userDATA", JSON.stringify(userInfo));

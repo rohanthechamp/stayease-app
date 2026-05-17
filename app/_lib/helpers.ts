@@ -2,12 +2,7 @@ import { DateRange } from "react-day-picker";
 import { CabinBookedDate } from "./data-service";
 import axiosClient from "./axiosClient";
 
-function parseDate(str: string) {
-    const [year, month, day] = str.split(" ").map(Number);
-    return new Date(year, month - 1, day);
-}
-
-// normalize to remove time completely
+// 1. Keep this helper to strip hours/minutes for clean day-by-day comparisons
 function normalizeDate(date: Date) {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
@@ -22,8 +17,9 @@ export function isRangeOverlapping(
     const selectedEnd = normalizeDate(selectedRange.to);
 
     return bookedDates.some((b) => {
-        const bookedStart = parseDate(b.startDate);
-        const bookedEnd = parseDate(b.endDate);
+        // 2. Swapped parseDate out for normalizeDate
+        const bookedStart = normalizeDate(b.startDate);
+        const bookedEnd = normalizeDate(b.endDate);
 
         return selectedStart <= bookedEnd && selectedEnd >= bookedStart;
     });

@@ -4,10 +4,10 @@ import React, { useOptimistic, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import ReservationCard from "./ReservationCard";
 import { handleBookingDeleteFormAction } from "../_lib/action";
-import { BookingAPI } from "@/types/booking";
+import { Booking } from "@/types/booking";
 import { ApiResponseDelete } from "../_lib/data-service";
 
-const ReservationList = ({ bookings }: { bookings: BookingAPI[] }) => {
+const ReservationList = ({ bookings }: { bookings: Booking[] }) => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();

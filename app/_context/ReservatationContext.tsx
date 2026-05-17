@@ -11,6 +11,7 @@ import React, {
 export type DateRange = {
     from: Date | undefined;
     to: Date | undefined;
+    nights?: number|undefined
 };
 
 type ReservationContextType = {

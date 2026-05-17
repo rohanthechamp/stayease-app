@@ -107,13 +107,13 @@ export const getCabins = async (
 };
 
 // SINGLE cabin
-export async function getCabin(id: string): Promise<Cabin | string> {
+export async function getCabin(id: string): Promise<Cabin> { // <-- Return just the Type
     try {
         const response = await axiosClient.get(`guest_portal/cabins/${id}/`);
-
         return response.data;
     } catch (error: any) {
-        return getError(error);
+        
+        throw new Error(getError(error) || "Failed to fetch cabin data");
     }
 }
 
@@ -222,7 +222,7 @@ export async function updateGuest(
             updatedGuest,
             {
                 headers: {
-                    Authorization: `Bearer ${session?.accesstoken}`,
+                    Authorization: `Bearer ${session?.accessToken}`,
                 },
             },
         );
@@ -256,7 +256,7 @@ export async function createBooking(
 
             {
                 headers: {
-                    Authorization: `Bearer ${session?.accesstoken}`,
+                    Authorization: `Bearer ${session?.accessToken}`,
                 },
             },
         );
@@ -282,7 +282,7 @@ export async function getAllGuestBookings(guestId: number): Promise<Booking[]> {
             `guest_portal/guest/bookings/${guestId}/`,
             {
                 headers: {
-                    Authorization: `Bearer ${session?.accesstoken}`,
+                    Authorization: `Bearer ${session?.accessToken}`,
                 },
             },
         );
@@ -326,7 +326,7 @@ export async function getBookingData(
         `guest_portal/bookings/${bookingId}/minimal/`,
         {
             headers: {
-                Authorization: `Bearer ${session?.accesstoken}`,
+                Authorization: `Bearer ${session?.accessToken}`,
             },
         },
     );
@@ -360,7 +360,7 @@ export async function updateBooking(
             UpdateBookingData,
             {
                 headers: {
-                    Authorization: `Bearer ${session?.accesstoken}`,
+                    Authorization: `Bearer ${session?.accessToken}`,
                 },
             }
         );
@@ -382,17 +382,24 @@ export type ApiResponseDelete =
     | { success: false; message: string };
 export async function deleteBooking(
     id: number,
-    guestId: number,
+    
 ): Promise<ApiResponseDelete> {
     try {
         const session = await getServerSession(authOptions);
+        
+        if (!session || !session.user?.guestId) {
+            throw new Error("You must be logged in to perform this action");
+        }
+
+
+        const guestId = session.user.guestId;
 
         const response = await axiosPrivate.delete(`guest_portal/bookings/${id}/`, {
             params: {
                 guestId: guestId,
             },
             headers: {
-                Authorization: `Bearer ${session?.accesstoken}`,
+                Authorization: `Bearer ${session?.accessToken}`,
             },
         });
 

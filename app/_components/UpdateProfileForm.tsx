@@ -21,7 +21,7 @@ const UpdateProfileForm = ({ children, data }: Props) => {
     const { data: session, update } = useSession(); // You'll need to import this
     const { user } = useUser();
     const [selectedCountry, setSelectedCountry] = useState<string>(() => {
-        const saved = localStorage.getItem("userSelectedCountry");
+        const saved = localStorage.getItem("userSelectedCountry") || '';
         return saved;
     });
     // const [isSubmit, setIsSubmit] = useState(false);
@@ -40,7 +40,7 @@ const UpdateProfileForm = ({ children, data }: Props) => {
 
     const flag =
         data.find((country) => country.name === selectedCountry)?.flag ??
-        session?.user?.countryFlag;
+        session?.user?.countryFlag ;
 
     console.log("SESSION HERE- ", session?.user);
 
@@ -84,9 +84,9 @@ const UpdateProfileForm = ({ children, data }: Props) => {
                 <div className="flex items-center justify-between">
                     <label htmlFor="nationality">Where are you from?</label>
 
-                    {selectedCountry ? (
+                    {selectedCountry && flag ? (
                         <Image
-                            src={flag}
+                            src={flag as string}
                             alt="Country flag"
                             className="h-5 rounded-sm"
                             width={30}

@@ -121,9 +121,8 @@ export const handleBookingDeleteFormAction = async (
 ): Promise<ActionState> => {
     const session = await getServerSession(authOptions)
     if (!session) throw new Error("You must be logged in");
-    const guestId = session?.user?.guestId;
 
-    const response = await deleteBooking(bookingId, guestId);
+    const response = await deleteBooking(bookingId);
     console.log(
         'handleBookingDeleteFormAction', response
     )
@@ -133,5 +132,5 @@ export const handleBookingDeleteFormAction = async (
     }
 
     // revalidatePath('/account/reservations');
-    return { success: true };
+    return { success: true, message: "" };
 };

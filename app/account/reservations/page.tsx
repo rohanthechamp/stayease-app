@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 // import ReservationCard from "../../_components/ReservationCard";
-import { BookingAPI } from "@/types/booking";
+import { Booking } from "@/types/booking";
 
 import { getAllGuestBookings } from "@/app/_lib/data-service";
 import ReservationList from "@/app/_components/ReservationList";
@@ -9,11 +9,14 @@ import { authOptions } from "@/app/_lib/auth";
 export default async function Page() {
   // CHANGE
   const session = await getServerSession(authOptions);
-  const guestId = session?.user.guestId;
-  console.log("guest id:-", guestId);
+  const guestId = session?.user?.guestId;
+  if (!guestId)
+  {
+    return false
+  }
 
-  const bookings: BookingAPI[] = await getAllGuestBookings(guestId);
-  console.log('getAllGuestBookings',bookings)
+  const bookings: Booking[] = await getAllGuestBookings(guestId);
+  console.log('getAllGuestBookings', bookings)
 
   return (
     <div>
