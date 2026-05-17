@@ -98,15 +98,15 @@ app/
 
 
 ## Local Development
-Frontend
-npm install
-npm run dev
-Backend
-python -m venv venv
-source venv/bin/activate   # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+- Frontend
+- npm install
+- npm run dev
+- Backend
+- python -m venv venv
+- source venv/bin/activate   # or venv\Scripts\activate on Windows
+- pip install -r requirements.txt
+- python manage.py migrate
+- python manage.py runserver
 
 ### Key Challenges Solved
 Custom auth flow for a customer-facing app without using Django’s default user model for guests
@@ -116,7 +116,7 @@ Keeping booking and reservation data consistent after deletes and updates
 Deploying a Next.js frontend with a separate backend
 Fixing production build issues caused by strict TypeScript and ESLint checks
 
-## Live Link  https://hote-customer-facing-website.vercel.app
+### Live Link  https://hote-customer-facing-website.vercel.app
 
 License
 
