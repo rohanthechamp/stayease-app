@@ -1,4 +1,4 @@
-# The Wild Oasis — Customer-Facing Booking Website
+# The StayEase — Customer-Facing Booking Website
 
 A production-style customer-facing hotel booking website built with **Next.js 14**, **NextAuth**, and a **Django REST Framework** backend.
 
