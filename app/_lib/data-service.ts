@@ -176,6 +176,7 @@ type guestCredentials = {
     email: string;
     fullName?: string | null;
     password?: string | null;
+    passwordConfirm?:string
     isOAuthUser: boolean;
 };
 
@@ -188,7 +189,7 @@ export async function createGuest(
     newGuest: guestCredentials,
 ): Promise<guestCreationResponse> {
     try {
-        const response = await axiosClient.post(`guest_portal/guests/`, {
+        const response = await axiosClient.post(`guest_portal/guests/register/`, {
             ...newGuest,
         });
 
@@ -426,7 +427,13 @@ export async function deleteBooking(
     }
 }
 
-export async function getJwtTokens(email: string) {
+type guestCredentials1 = {
+    email: string;
+    password?: string | null;
+    isOAuthUser?: boolean;
+};
+
+export async function getJwtTokens(data: guestCredentials1 ) {
     // Changed method to POST because GET requests cannot have a body
     const url = `${BASE_URL}guest_portal/auth/google/`;
     const response = await fetch(url, {
@@ -435,7 +442,7 @@ export async function getJwtTokens(email: string) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            email: email,
+            email: data.email,
         }),
     });
     console.log("getJwtTokens", response);

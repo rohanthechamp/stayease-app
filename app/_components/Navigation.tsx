@@ -41,7 +41,7 @@ export default async function Navigation() {
         </li>
 
         {/* Auth Navigation */}
-        {session?.user?.image ? (
+        {session?.user ? (
           <li>
             <Link
               href="/account"

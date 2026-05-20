@@ -11,7 +11,7 @@ function RegisterPage() {
         fullName: "",
         email: "",
         password: "",
-        confirmPassword: "",
+        passwordConfirm: "",
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ function RegisterPage() {
         setError("");
         setSuccess("");
 
-        if (formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.passwordConfirm) {
             setError("Passwords do not match");
             return;
         }
@@ -45,10 +45,10 @@ function RegisterPage() {
         try {
             setIsLoading(true);
 
-            const response = await createGuest({ email: formData.email, fullName: formData.fullName, password: formData.password, isOAuthUser: false })
+            const response = await createGuest({ fullName: formData.fullName, email: formData.email, password: formData.password, passwordConfirm: formData.passwordConfirm, isOAuthUser: false })
 
 
-            if (response.success) {
+            if (!response.success) {
                 throw new Error("Invalid email or password");
             }
 
@@ -58,7 +58,7 @@ function RegisterPage() {
                 fullName: "",
                 email: "",
                 password: "",
-                confirmPassword: "",
+                passwordConfirm: "",
             });
 
             setTimeout(() => {
@@ -196,8 +196,8 @@ function RegisterPage() {
 
                                 <input
                                     type="password"
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
+                                    name="passwordConfirm"
+                                    value={formData.passwordConfirm}
                                     onChange={handleChange}
                                     required
                                     placeholder="Confirm your password"

@@ -40,7 +40,7 @@ const UpdateProfileForm = ({ children, data }: Props) => {
 
     const flag =
         data.find((country) => country.name === selectedCountry)?.flag ??
-        session?.user?.countryFlag ;
+        session?.user?.countryFlag;
 
     console.log("SESSION HERE- ", session?.user);
 
