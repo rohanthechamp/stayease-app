@@ -9,7 +9,8 @@ import {
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { authOptions } from "../_lib/auth";
-
+import default_user_profile from "@/public/user_profile.png"
+import Image from "next/image";
 
 
 export default async function Navigation() {
@@ -47,10 +48,14 @@ export default async function Navigation() {
               href="/account"
               className="hover:text-accent-400 transition-colors flex items-center gap-4 group"
             >
-              <img
+             
+
+              <Image
                 className="h-8 w-8 rounded-full border border-accent-900 group-hover:border-accent-400 transition-all shadow-sm"
-                src={session.user.image}
-                alt={session.user.name || "Guest profile"}
+                src={session?.user?.image || default_user_profile}
+                alt={session?.user?.name || "Guest profile"}
+                width={32}
+                height={32}
                 referrerPolicy="no-referrer"
               />
 
