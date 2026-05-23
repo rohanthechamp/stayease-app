@@ -186,28 +186,42 @@ type guestCreationResponse = {
     message: string;
 };
 
+
 export async function createGuest(
-    newGuest: guestCredentials,
+    newGuest: guestCredentials
 ): Promise<guestCreationResponse> {
     try {
-        const response = await axiosClient.post(`guest_portal/guests/register/`, {
-            ...newGuest,
-        });
+        const response = await fetch(
+            `${BASE_URL}guest_portal/guests/register/`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newGuest),
+            }
+        );
 
-        if (response.status === 201 ) {
+        const data = await response.json();
+
+        if (response.status === 201) {
             return {
                 success: true,
-                message: response.data[0] || "Guest created successfully",
+                message: data[0] || "Guest created successfully",
             };
         }
 
-        return { success: false, message: "Unexpected response status" };
+        return {
+            success: false,
+            message: data?.message || JSON.stringify(data),
+        };
     } catch (error: any) {
-        const errMsg = getError(error);
-        return { success: false, message: errMsg || "Guest creation failed" };
+        return {
+            success: false,
+            message: error?.message || "Guest creation failed",
+        };
     }
 }
-
 export async function updateGuest(
     guestId: number,
     updatedGuest: {
