@@ -4,7 +4,7 @@ A production-style customer-facing hotel booking website built with **Next.js 14
 
 It supports Google sign-in, guest account creation, cabin browsing, date-based booking, reservation management, and secure API access through a custom guest authentication flow.
 
-**Live Demo:** https://hote-customer-facing-website.vercel.app  
+**Live Demo:** https://stayease-app-zeta.vercel.app/
 
 ---
 
@@ -121,7 +121,7 @@ app/
 - Debugged and fixed production build issues caused by strict TypeScript constraints
 - Deployed a decoupled full-stack system (Next.js frontend + Django backend)
 
-### Live Link  https://hote-customer-facing-website.vercel.app
+### Live Link  https://stayease-app-zeta.vercel.app/
 
 License
 
