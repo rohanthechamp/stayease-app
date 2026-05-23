@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCabins } from "@/app/_lib/data-service";
 import default_cabin from "@/public/hotel-cabin.jpg";
+import { Cabin } from "../types/cabin";
 
 export const metadata = {
   title: "Home / StayEase",
@@ -9,7 +10,7 @@ export const metadata = {
 
 export default async function Page() {
   // Fetch cabins dynamically from the data service
-  let cabins = [];
+  let cabins :Cabin[]= [];
   try {
     cabins = await getCabins();
   } catch (error) {
