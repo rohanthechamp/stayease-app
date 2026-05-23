@@ -18,14 +18,14 @@ export default async function Navigation() {
   console.log( 'Navigation' ,session)
 
   return (
-    <nav className="z-10 text-xl">
-      <ul className="flex gap-16 items-center">
+    <nav className="z-10 text-sm">
+      <ul className="flex gap-8 items-center">
 
         {/* Cabins */}
         <li>
           <Link
             href="/cabins"
-            className="hover:text-accent-400 transition-colors"
+            className="font-medium text-primary-200 hover:text-accent-500 transition-colors"
           >
             Cabins
           </Link>
@@ -35,7 +35,7 @@ export default async function Navigation() {
         <li>
           <Link
             href="/about"
-            className="hover:text-accent-400 transition-colors"
+            className="font-medium text-primary-200 hover:text-accent-500 transition-colors"
           >
             About
           </Link>
@@ -46,20 +46,17 @@ export default async function Navigation() {
           <li>
             <Link
               href="/account"
-              className="hover:text-accent-400 transition-colors flex items-center gap-4 group"
+              className="flex items-center gap-2.5 group bg-primary-900 border border-primary-800 rounded-xl px-3 py-2 hover:border-accent-500/40 transition-all"
             >
-             
-
               <Image
-                className="h-8 w-8 rounded-full border border-accent-900 group-hover:border-accent-400 transition-all shadow-sm"
+                className="h-7 w-7 rounded-full border border-primary-800 group-hover:border-accent-500/50 transition-all"
                 src={session?.user?.image || default_user_profile}
                 alt={session?.user?.name || "Guest profile"}
-                width={32}
-                height={32}
+                width={28}
+                height={28}
                 referrerPolicy="no-referrer"
               />
-
-              <span className="font-medium">
+              <span className="font-medium text-primary-200 group-hover:text-accent-500 transition-colors">
                 Guest area
               </span>
             </Link>
@@ -70,13 +67,10 @@ export default async function Navigation() {
             <li>
               <Link
                 href="/signup"
-                className="hover:text-accent-400 transition-colors flex items-center gap-3 group"
+                className="flex items-center gap-2 group text-primary-300 hover:text-accent-500 transition-colors"
               >
-                <UserPlusIcon className="h-6 w-6 text-primary-600 group-hover:text-accent-400 transition-colors" />
-
-                <span className="font-medium text-accent-100 group-hover:text-accent-400 transition-colors">
-                  Sign Up
-                </span>
+                <UserPlusIcon className="h-4 w-4 text-primary-400 group-hover:text-accent-500 transition-colors" />
+                <span className="font-medium">Sign Up</span>
               </Link>
             </li>
 
@@ -84,13 +78,10 @@ export default async function Navigation() {
             <li>
               <Link
                 href="/signin"
-                className="hover:text-accent-400 transition-colors flex items-center gap-3 group"
+                className="flex items-center gap-2 group text-primary-300 hover:text-accent-500 transition-colors"
               >
-                <ArrowRightStartOnRectangleIcon className="h-6 w-6 text-primary-600 group-hover:text-accent-400 transition-colors" />
-
-                <span className="font-medium text-accent-100 group-hover:text-accent-400 transition-colors">
-                  Sign In
-                </span>
+                <ArrowRightStartOnRectangleIcon className="h-4 w-4 text-primary-400 group-hover:text-accent-500 transition-colors" />
+                <span className="font-medium">Sign In</span>
               </Link>
             </li>
           </>

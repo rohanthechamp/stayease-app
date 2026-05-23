@@ -36,10 +36,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                 position="top-center"
                 reverseOrder={false}
                 gutter={8}
-                containerClassName=""
-                containerStyle={{}}
                 toastOptions={{
-                  
                   style: {
                     background: '#363636',
                     color: '#fff',
