@@ -1,7 +1,7 @@
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { format, formatDistance, isPast, isToday, parseISO } from "date-fns";
 import DeleteReservation from "./DeleteReservation";
-import { Booking } from "@/types/booking";
+import { Booking, GuestBookings } from "@/types/booking";
 import Image from "next/image";
 import default_cabin from "@/public/hotel-cabin.jpg";
 import { ApiResponseDelete } from "../_lib/data-service";
@@ -12,29 +12,30 @@ export const formatDistanceFromNow = (dateStr: string) =>
   }).replace("about ", "");
 
 type Props = {
-  booking: Booking;
+  booking: GuestBookings;
   onDelete: (bookingId: number) => Promise<ApiResponseDelete>;
 
 };
 function ReservationCard({ booking, onDelete }: Props) {
   const {
     id,
-    // guestId,
+    guestId,
     startDate,
     endDate,
     numNights,
     totalPrice,
     numGuests,
-    // status,
+    status,
     created_at,
-    cabins: { name, image },
+    cabin_name,
+    cabin_image,
   } = booking;
 
   return (
     <div className="flex border border-primary-800">
       <div className="relative h-32 aspect-square">
         <Image
-          src={image || default_cabin}
+          src={cabin_image || default_cabin}
           alt={`Cabin ${name}`}
           className="object-cover border-r border-primary-800"
           fill
@@ -45,7 +46,7 @@ function ReservationCard({ booking, onDelete }: Props) {
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold">Booking id-{id}</h3>
           <h3 className="text-xl font-semibold">
-            {numNights} nights in Cabin {name}
+            {numNights} nights in Cabin {cabin_name}
           </h3>
           {isPast(new Date(startDate)) ? (
             <span className="bg-yellow-800 text-yellow-200 h-7 px-3 uppercase text-xs font-bold flex items-center rounded-sm">
@@ -87,7 +88,7 @@ function ReservationCard({ booking, onDelete }: Props) {
             <PencilSquareIcon className="h-5 w-5 text-primary-600 group-hover:text-primary-800 transition-colors" />
             <span className="mt-1">Edit</span>
           </a>
-          <DeleteReservation  bookingId={id} onDelete={onDelete} />
+          <DeleteReservation bookingId={id} onDelete={onDelete} />
 
 
         </div>

@@ -5,10 +5,7 @@ import { Cabin } from "@/types/cabin";
 import { CabinBookedDate } from "../_lib/data-service";
 
 import { DayPicker, DateRange } from "react-day-picker";
-import {
-  differenceInDays,
-  isWithinInterval,
-} from "date-fns";
+import { differenceInDays } from "date-fns";
 import { useMemo } from "react";
 
 import { useReservation } from "../_context/ReservatationContext";
@@ -44,18 +41,19 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
   Price Logic
   =========================
   */
-  const pricePerNight = discount > 0 ? regularPrice - discount : regularPrice;
+  const pricePerNight =
+    discount > 0 ? regularPrice - discount : regularPrice;
   const totalPrice = numNights * pricePerNight;
 
   /*
   =========================
-  Disabled Dates (FIXED)
+  Disabled Dates (SAFE)
   =========================
   */
   const disabledDays = useMemo(() => {
     return bookedDates.map((date) => ({
-      from: date.startDate,
-      to: date.endDate,
+      from: new Date(date.startDate),
+      to: new Date(date.endDate),
     }));
   }, [bookedDates]);
 
@@ -68,38 +66,35 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
     if (!range?.from || !range?.to) return false;
 
     return bookedDates.some((booking) => {
-      const start = booking.startDate;
-      const end = booking.endDate;
+      const start = new Date(booking.startDate);
+      const end = new Date(booking.endDate);
 
-      return (
-        isWithinInterval(range.from!, { start, end }) ||
-        isWithinInterval(range.to!, { start, end })
-      );
+      // Proper overlap check
+      return range.from <= end && range.to >= start;
     });
   }
 
   /*
   =========================
-  Handle Select
+  Handle Select (FIXED)
   =========================
   */
   function handleSelect(selected: DateRange | undefined) {
     if (!selected) return;
 
+    // Allow first click (partial selection)
+    if (!selected.from || !selected.to) {
+      setRange(selected);
+      return;
+    }
+
+    // Prevent overlapping bookings
     if (isAlreadyBooked(selected)) {
       resetRange();
       return;
     }
 
-    // Ensure both from and to are present before setting range
-    if (!selected.from || !selected.to) {
-      resetRange();
-      return;
-    }
-
-    setRange({ from: selected.from!, to: selected.to! });
-    
-
+    setRange(selected);
   }
 
   return (
@@ -107,8 +102,8 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
       <DayPicker
         className="pt-12 place-self-center"
         mode="range"
-        onSelect={handleSelect}
         selected={range}
+        onSelect={handleSelect}
         min={minBookingLength + 1}
         max={maxBookingLength}
         fromMonth={today}
@@ -147,7 +142,9 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
               </p>
 
               <p>
-                <span className="text-lg font-bold uppercase">Total</span>{" "}
+                <span className="text-lg font-bold uppercase">
+                  Total
+                </span>{" "}
                 <span className="text-2xl font-semibold">
                   ${totalPrice.toFixed(2)}
                 </span>

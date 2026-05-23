@@ -25,6 +25,25 @@ export type Booking = {
   // Nested cabin
   cabins: Cabin;
 };
+export type GuestBookings = {
+  id: number;
+
+  guest_id: number;
+
+  created_at: string;
+  startDate: string;
+  endDate: string;
+
+  numNights: number;
+  numGuests: number;
+
+  totalPrice: string;
+
+  status: BookingStatus;
+
+  cabin_name: string;
+  cabin_image: string | null;
+};
 export type SelectCountryProps = {
   defaultCountry?: string;
   name: string;

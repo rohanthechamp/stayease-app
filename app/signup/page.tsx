@@ -52,6 +52,8 @@ function RegisterPage() {
                 throw new Error("Invalid email or password");
             }
 
+            // if ()
+
             setSuccess("Account created successfully");
 
             setFormData({

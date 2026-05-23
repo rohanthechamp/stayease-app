@@ -10,11 +10,17 @@ const nextConfig = {
         port: "8000",
         pathname: "/media/**",
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 
   eslint: {
-    ignoreDuringBuilds: true, // 🔥 THIS FIXES YOUR DEPLOY ERROR
+    ignoreDuringBuilds: true, 
   },
 };
 

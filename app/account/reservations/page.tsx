@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 // import ReservationCard from "../../_components/ReservationCard";
-import { Booking } from "@/types/booking";
+import { Booking, GuestBookings } from "@/types/booking";
 
 import { getAllGuestBookings } from "@/app/_lib/data-service";
 import ReservationList from "@/app/_components/ReservationList";
@@ -15,7 +15,7 @@ export default async function Page() {
     return false
   }
 
-  const bookings: Booking[] = await getAllGuestBookings(guestId);
+  const bookings: GuestBookings[] = await getAllGuestBookings(guestId);
   console.log('getAllGuestBookings', bookings)
 
   return (

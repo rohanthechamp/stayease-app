@@ -3,6 +3,7 @@ import {
     bookingDataType,
     Country,
     formDataType,
+    GuestBookings,
     Settings,
 } from "@/types/booking";
 import axiosClient, { axiosPrivate } from "./axiosClient";
@@ -276,7 +277,7 @@ export async function createBooking(
     }
 }
 
-export async function getAllGuestBookings(guestId: number): Promise<Booking[]> {
+export async function getAllGuestBookings(guestId: number): Promise<GuestBookings[]> {
     try {
         const session = await getServerSession(authOptions);
         const { data } = await axiosPrivate.get(
