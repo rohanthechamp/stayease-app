@@ -194,7 +194,7 @@ export async function createGuest(
             ...newGuest,
         });
 
-        if (response.status === 201) {
+        if (response.status === 201 ) {
             return {
                 success: true,
                 message: response.data[0] || "Guest created successfully",

@@ -48,24 +48,26 @@ function RegisterPage() {
             const response = await createGuest({ fullName: formData.fullName, email: formData.email, password: formData.password, passwordConfirm: formData.passwordConfirm, isOAuthUser: false })
 
 
-            if (!response.success) {
-                throw new Error("Invalid email or password");
+            if (response.success) {
+                setSuccess("Account created successfully");
+
+                setFormData({
+                    fullName: "",
+                    email: "",
+                    password: "",
+                    passwordConfirm: "",
+                });
+
+                setTimeout(() => {
+                    window.location.href = "/signin";
+                }, 1500);
+
             }
+            throw new Error("Invalid email or password. Try again");
 
-            // if ()
 
-            setSuccess("Account created successfully");
 
-            setFormData({
-                fullName: "",
-                email: "",
-                password: "",
-                passwordConfirm: "",
-            });
 
-            setTimeout(() => {
-                window.location.href = "/signin";
-            }, 1500);
 
         } catch (error) {
             console.error(error);
