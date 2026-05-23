@@ -189,11 +189,11 @@ export default async function Page() {
                         </span>
                         <p className="flex items-baseline gap-2">
                           <span className="text-2xl font-semibold text-primary-100">
-                            ${finalPrice}
+                            ${finalPrice.toFixed(2)}
                           </span>
                           {hasDiscount && (
                             <span className="text-sm line-through text-primary-500">
-                              ${regularPrice}
+                              ${regularPrice} 
                             </span>
                           )}
                         </p>
