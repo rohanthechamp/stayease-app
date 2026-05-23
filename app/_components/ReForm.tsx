@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { DateRange } from "react-day-picker";
+import { AppDateRange } from "../_context/ReservatationContext";
 import { SubmitButton } from "./SubmitButton";
 type BaseProps = {
     maxCapacity: number;
@@ -13,7 +12,7 @@ type BaseProps = {
 
 type CreateModeProps = BaseProps & {
     mode: "create";
-    range: DateRange;
+    range: AppDateRange;
     hasConflict: boolean;
     isValidRange: boolean;
 };
@@ -99,7 +98,7 @@ const CreateSection = ({
     hasConflict,
     isValidRange,
 }: {
-    range: DateRange;
+        range: AppDateRange;
     hasConflict: boolean;
     isValidRange: boolean;
 }) => {

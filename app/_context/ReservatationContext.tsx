@@ -8,15 +8,15 @@ import React, {
     useState,
 } from "react";
 
-export type DateRange = {
+export type AppDateRange  = {
     from: Date | undefined;
-    to: Date | undefined;
+    to?: Date | undefined;
     nights?: number|undefined
 };
 
 type ReservationContextType = {
-    range: DateRange;
-    setRange: React.Dispatch<React.SetStateAction<DateRange>>;
+    range: AppDateRange ;
+    setRange: React.Dispatch<React.SetStateAction<AppDateRange >>;
     resetRange:()=> void,
 };
 
@@ -24,7 +24,7 @@ const ReservationContext = createContext<ReservationContextType | null>(
     null
 );
 
-const initialState: DateRange = { from: undefined, to: undefined,nights:undefined };
+const initialState: AppDateRange  = { from: undefined, to: undefined, nights: undefined };
 
 function ReservationProvider({ children }: PropsWithChildren) {
     const [range, setRange] = useState(initialState);
@@ -49,3 +49,4 @@ function useReservation() {
 }
 
 export { ReservationProvider, useReservation };
+

@@ -8,7 +8,7 @@ import { DayPicker, DateRange } from "react-day-picker";
 import { differenceInDays } from "date-fns";
 import { useMemo } from "react";
 
-import { useReservation } from "../_context/ReservatationContext";
+import { AppDateRange, useReservation } from "../_context/ReservatationContext";
 
 import "react-day-picker/dist/style.css";
 
@@ -64,13 +64,18 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
   */
   function isAlreadyBooked(range: DateRange) {
     if (!range?.from || !range?.to) return false;
+    const from = range?.from
+    const to = range?.to
 
     return bookedDates.some((booking) => {
       const start = new Date(booking.startDate);
       const end = new Date(booking.endDate);
 
       // Proper overlap check
-      return range.from <= end && range.to >= start;
+
+      return from <= end && to >= start;
+
+
     });
   }
 
@@ -81,9 +86,11 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
   */
   function handleSelect(selected: DateRange | undefined) {
     if (!selected) return;
+    const selected_from = selected.from
+    const selected_to = selected.to
 
     // Allow first click (partial selection)
-    if (!selected.from || !selected.to) {
+    if (!selected_from || selected_to) {
       setRange(selected);
       return;
     }

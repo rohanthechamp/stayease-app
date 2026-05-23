@@ -19,7 +19,7 @@ type Props = {
 function ReservationCard({ booking, onDelete }: Props) {
   const {
     id,
-    guestId,
+    guest_id,
     startDate,
     endDate,
     numNights,

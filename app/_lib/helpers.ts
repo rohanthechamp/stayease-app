@@ -1,6 +1,6 @@
-import { DateRange } from "react-day-picker";
-import { CabinBookedDate } from "./data-service";
+import { AppDateRange } from "../_context/ReservatationContext";
 import axiosClient from "./axiosClient";
+import { CabinBookedDate } from "./data-service";
 
 // 1. Keep this helper to strip hours/minutes for clean day-by-day comparisons
 function normalizeDate(date: Date) {
@@ -8,7 +8,7 @@ function normalizeDate(date: Date) {
 }
 
 export function isRangeOverlapping(
-    selectedRange: DateRange,
+    selectedRange: AppDateRange,
     bookedDates: CabinBookedDate[],
 ) {
     if (!selectedRange?.from || !selectedRange?.to) return false;
