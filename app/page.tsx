@@ -62,6 +62,86 @@ export default async function Page() {
           StayEase offers a minimalist approach to mountain living.
         </p>
       </section>
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="rounded-[2rem] border border-primary-800 bg-primary-900/70 backdrop-blur-md overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.25)]">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-0">
+
+            {/* Left: Brand story */}
+            <div className="p-8 md:p-12 lg:p-16 border-b lg:border-b-0 lg:border-r border-primary-800">
+              <span className="text-xs font-semibold uppercase tracking-[0.35em] text-accent-400">
+                Why guests choose StayEase
+              </span>
+
+              <h2 className="mt-4 text-3xl md:text-4xl font-light text-primary-100 tracking-tight leading-tight">
+                Designed for travelers who want calm, clarity, and a smooth booking experience.
+              </h2>
+
+              <p className="mt-5 max-w-2xl text-primary-300 leading-7">
+                StayEase combines curated cabins, secure guest authentication, and a clean reservation flow so booking feels effortless from first click to check-in.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/cabins"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-sm font-semibold text-primary-950 transition hover:bg-accent-600 hover:scale-[1.02]"
+                >
+                  Explore cabins
+                </Link>
+
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary-700 px-5 py-3 text-sm font-semibold text-primary-200 transition hover:bg-primary-800 hover:text-primary-50"
+                >
+                  Learn more
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Stats cards */}
+            <div className="grid gap-px bg-primary-800">
+              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-px">
+
+                <div className="bg-primary-900 p-8">
+                  <p className="text-xs uppercase tracking-[0.3em] text-primary-500">
+                    Curated stays
+                  </p>
+                  <p className="mt-3 text-2xl font-semibold text-primary-100">
+                    Premium cabins
+                  </p>
+                  <p className="mt-2 text-sm text-primary-400">
+                    Carefully selected spaces with a clean, minimal feel.
+                  </p>
+                </div>
+
+                <div className="bg-primary-900 p-8">
+                  <p className="text-xs uppercase tracking-[0.3em] text-primary-500">
+                    Secure booking
+                  </p>
+                  <p className="mt-3 text-2xl font-semibold text-primary-100">
+                    Guest auth flow
+                  </p>
+                  <p className="mt-2 text-sm text-primary-400">
+                    Google sign-in, guest profile, and protected reservations.
+                  </p>
+                </div>
+
+                <div className="bg-primary-900 p-8">
+                  <p className="text-xs uppercase tracking-[0.3em] text-primary-500">
+                    Smooth UX
+                  </p>
+                  <p className="mt-3 text-2xl font-semibold text-primary-100">
+                    Fast reservation flow
+                  </p>
+                  <p className="mt-2 text-sm text-primary-400">
+                    Clear availability, instant feedback, and clean interaction design.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* FEATURED CABINS */}
       <section className="space-y-12 max-w-7xl mx-auto px-4">
