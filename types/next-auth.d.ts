@@ -34,3 +34,11 @@ declare module "next-auth/jwt" {
         countryFlag?: string;
     }
 }
+
+declare module "next-auth" {
+
+    interface Session {
+        forceExpire?: boolean;
+        
+    }
+}

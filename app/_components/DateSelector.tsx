@@ -6,9 +6,10 @@ import { CabinBookedDate } from "../_lib/data-service";
 
 import { DayPicker, DateRange } from "react-day-picker";
 import { differenceInDays } from "date-fns";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { startOfDay } from "date-fns";
 
-import { AppDateRange, useReservation } from "../_context/ReservatationContext";
+import { useReservation } from "../_context/ReservatationContext";
 
 import "react-day-picker/dist/style.css";
 
@@ -20,8 +21,9 @@ type Props = {
 
 function DateSelector({ settings, bookedDates, cabin }: Props) {
   const { range, setRange, resetRange } = useReservation();
+  const [selected, setSelected] = useState<boolean>(false)
 
-  const today = new Date();
+  const today = startOfDay(new Date());
 
   const { regularPrice, discount } = cabin;
   const { minBookingLength, maxBookingLength } = settings;
@@ -85,9 +87,21 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
   =========================
   */
   function handleSelect(selected: DateRange | undefined) {
+
     if (!selected) return;
+
     const selected_from = selected.from
     const selected_to = selected.to
+    // console.log('selected range', selected)
+    const { from } = selected;
+
+    if (from && from < today) {
+      setSelected((prev) => !prev)
+      resetRange();
+
+      return;
+    }
+    setSelected(false)
 
     // Allow first click (partial selection)
     if (!selected_from || selected_to) {
@@ -159,6 +173,10 @@ function DateSelector({ settings, bookedDates, cabin }: Props) {
             </>
           )}
         </div>
+
+        {
+          selected ? <p className="bg-red-600" >Can not select dates before today</p> : null
+        }
 
         {(range?.from || range?.to) && (
           <button

@@ -1,6 +1,17 @@
+"use client";
+import { useReservation } from "@/app/_context/ReservatationContext";
 import Link from "next/link";
 
 export default function Page() {
+  const { range, resetRange } = useReservation();
+
+  (function () {
+    console.log("range", range);
+    if (range) {
+      resetRange();
+    }
+  })();
+
   return (
     <div className="text-center space-y-6 mt-4">
       <h1 className="text-3xl font-semibold">

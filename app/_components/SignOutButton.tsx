@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 function SignOutButton() {
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const {  update } = useSession();
+
+  
 
   const handleSignOut = async () => {
     try {
@@ -13,7 +16,8 @@ function SignOutButton() {
       localStorage.clear()
       sessionStorage.clear()
       // callbackUrl: "/" sends them home
-      // redirect: true is the default, but we're being explicit
+      // redirect: true is the default, but we're being 
+      await update({  forceExpire: true });
       await signOut({ callbackUrl: "/" });
    
     } catch (error) {

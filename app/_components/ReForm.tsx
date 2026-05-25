@@ -85,7 +85,7 @@ const ReForm = (props: FormProps) => {
                     isValidRange={props.isValidRange}
                 />
             ) : (
-                <SubmitButton  msg={'Updating booking'} />
+                <SubmitButton msg={"Updating booking"} />
             )}
         </form>
     );
@@ -98,7 +98,7 @@ const CreateSection = ({
     hasConflict,
     isValidRange,
 }: {
-        range: AppDateRange;
+    range: AppDateRange;
     hasConflict: boolean;
     isValidRange: boolean;
 }) => {
@@ -114,7 +114,7 @@ const CreateSection = ({
                 </p>
             ) : null}
 
-            {isValidRange && <SubmitButton msg ={'Creating Booking'} />}
+            {isValidRange && <SubmitButton msg={"Creating Booking"} />}
         </>
     );
 };

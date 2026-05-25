@@ -94,15 +94,15 @@ export const getError = (error: any): string => {
 export async function refreshAccessToken(token: any) {
     try {
         const response = await axiosClient.post("guest_portal/auth/refresh/", {
-            refreshtoken: token.refreshtoken,
+            refreshToken: token.refreshToken,
         });
 
         return {
             ...token,
 
-            accesstoken: response.data.data.accesstoken,
+            accessToken: response.data.data.accessToken,
 
-            refreshtoken: response.data.data.refreshtoken,
+            refreshToken: response.data.data.refreshToken,
             accessTokenExpires: Date.now() + 15 * 60 * 1000,
 
             error: null,

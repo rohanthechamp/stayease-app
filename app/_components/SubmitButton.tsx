@@ -10,6 +10,7 @@ export function SubmitButton({
     msg = "Submit",
     pendingMsg = "Processing...",
 }: Props) {
+    
     const { pending } = useFormStatus();
 
     return (
@@ -17,12 +18,12 @@ export function SubmitButton({
             type="submit"
             disabled={pending}
             aria-disabled={pending}
+            
             className={`bg-accent-500 px-8 py-4 font-semibold transition-all
-            ${
-                pending
+            ${pending
                     ? "opacity-70 cursor-not-allowed"
                     : "hover:bg-accent-600"
-            }`}
+                }`}
         >
             {pending ? pendingMsg : msg}
         </button>

@@ -4,7 +4,7 @@ import React, { useOptimistic, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import ReservationCard from "./ReservationCard";
 import { handleBookingDeleteFormAction } from "../_lib/action";
-import {  GuestBookings } from "@/types/booking";
+import { GuestBookings } from "@/types/booking";
 import { ApiResponseDelete } from "../_lib/data-service";
 
 const ReservationList = ({ bookings }: { bookings: GuestBookings[] }) => {
@@ -12,13 +12,15 @@ const ReservationList = ({ bookings }: { bookings: GuestBookings[] }) => {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+
   const [optimisticBookings, removeOptimisticBooking] = useOptimistic(
     bookings,
     (state, bookingId: number) =>
       state.filter((booking) => booking.id !== bookingId)
   );
 
-  async function handleDelete(bookingId: number) :Promise < ApiResponseDelete >{
+
+  async function handleDelete(bookingId: number): Promise<ApiResponseDelete> {
     setError(null);
 
     // update UI immediately
@@ -47,7 +49,7 @@ const ReservationList = ({ bookings }: { bookings: GuestBookings[] }) => {
       router.refresh(); // rollback UI from real server data
       return {
         success: false,
-        message:"Delete failed",
+        message: "Delete failed",
       };
     }
   }

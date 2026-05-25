@@ -80,14 +80,14 @@ export const authOptions: AuthOptions = {
                 return false;
             }
         },
-        async jwt({ token, user, trigger }) {
+        async jwt({ token, user, trigger, session }) {
             // 1. Check for user AND ensure user.email exists
             if (user && user.email) {
                 const guest = await getGuest(user.email);
                 const jwtData = await getJwtTokens({ email: user.email, isOAuthUser: true });
 
-                token.accesstoken = jwtData.data.accesstoken;
-                token.refreshtoken = jwtData.data.refreshtoken;
+                token.accessToken = jwtData.data.accessToken;
+                token.refreshToken = jwtData.data.refreshToken;
                 token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
 
                 token.guestId = guest.id;
@@ -103,6 +103,13 @@ export const authOptions: AuthOptions = {
 
             // 2. Check for update trigger AND ensure token.email exists
             if (trigger === "update" && token.email) {
+                if (session?.forceExpire) {
+                    token.accessTokenExpires = Date.now() - 1000; 
+                    token.accessToken = ""; 
+                    token.refreshToken = "";
+                    return token;
+                }
+
                 const guest = await getGuest(token.email);
 
                 // Standardizing fallbacks to match the strings above
@@ -121,8 +128,8 @@ export const authOptions: AuthOptions = {
             session.user.countryFlag = token.countryFlag as string;
 
             // Cast the tokens as strings to satisfy 'string | undefined'
-            session.accessToken = token.accesstoken as string;
-            session.refreshToken = token.refreshtoken as string;
+            session.accessToken = token.accessToken as string;
+            session.refreshToken = token.refreshToken as string;
 
             return session;
         },
